@@ -84,6 +84,12 @@ class Protocol extends _i1.SerializationManager {
     if (t == _i1.getType<_i5.Task?>()) {
       return (data != null ? _i5.Task.fromJson(data) : null) as T;
     }
+    if (t == Map<String, int>) {
+      return (data as Map).map(
+            (k, v) => MapEntry(deserialize<String>(k), deserialize<int>(v)),
+          )
+          as T;
+    }
     if (t == List<_i6.Task>) {
       return (data as List).map((e) => deserialize<_i6.Task>(e)).toList() as T;
     }

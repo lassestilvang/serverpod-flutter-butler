@@ -10,6 +10,8 @@ googleIdp:
   - login:
 jwtRefresh:
   - refreshAccessToken:
+analytics:
+  - getDailyStats:
 focus:
   - startSession:
   - stopSession:

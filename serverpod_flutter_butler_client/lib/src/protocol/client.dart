@@ -263,6 +263,23 @@ class EndpointJwtRefresh extends _i4.EndpointRefreshJwtTokens {
 }
 
 /// {@category Endpoint}
+class EndpointAnalytics extends _i2.EndpointRef {
+  EndpointAnalytics(_i2.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'analytics';
+
+  /// Returns a simple summary of daily statistics.
+  /// For this MVP, it returns a Map with keys: 'completedTasks', 'totalFocusMinutes'.
+  _i3.Future<Map<String, int>> getDailyStats() =>
+      caller.callServerEndpoint<Map<String, int>>(
+        'analytics',
+        'getDailyStats',
+        {},
+      );
+}
+
+/// {@category Endpoint}
 class EndpointFocus extends _i2.EndpointRef {
   EndpointFocus(_i2.EndpointCaller caller) : super(caller);
 
@@ -411,6 +428,7 @@ class Client extends _i2.ServerpodClientShared {
     emailIdp = EndpointEmailIdp(this);
     googleIdp = EndpointGoogleIdp(this);
     jwtRefresh = EndpointJwtRefresh(this);
+    analytics = EndpointAnalytics(this);
     focus = EndpointFocus(this);
     tasks = EndpointTasks(this);
     timer = EndpointTimer(this);
@@ -423,6 +441,8 @@ class Client extends _i2.ServerpodClientShared {
   late final EndpointGoogleIdp googleIdp;
 
   late final EndpointJwtRefresh jwtRefresh;
+
+  late final EndpointAnalytics analytics;
 
   late final EndpointFocus focus;
 
@@ -439,6 +459,7 @@ class Client extends _i2.ServerpodClientShared {
     'emailIdp': emailIdp,
     'googleIdp': googleIdp,
     'jwtRefresh': jwtRefresh,
+    'analytics': analytics,
     'focus': focus,
     'tasks': tasks,
     'timer': timer,

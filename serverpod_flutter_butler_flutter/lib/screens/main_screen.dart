@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'screens/timebox_screen.dart';
 import 'screens/deep_work_screen.dart';
+import 'screens/insight_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -15,6 +16,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screens = [
     const TimeBoxScreen(),
     const DeepWorkScreen(),
+    const InsightScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -36,6 +38,10 @@ class _MainScreenState extends State<MainScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.self_improvement),
             label: 'Deep Work',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.bar_chart),
+            label: 'Insights',
           ),
         ],
         currentIndex: _selectedIndex,
