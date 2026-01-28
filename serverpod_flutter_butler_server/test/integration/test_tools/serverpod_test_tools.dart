@@ -16,9 +16,11 @@ import 'package:serverpod/serverpod.dart' as _i2;
 import 'dart:async' as _i3;
 import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
     as _i4;
-import 'package:serverpod_flutter_butler_server/src/generated/task.dart' as _i5;
+import 'package:serverpod_flutter_butler_server/src/generated/focus_session.dart'
+    as _i5;
+import 'package:serverpod_flutter_butler_server/src/generated/task.dart' as _i6;
 import 'package:serverpod_flutter_butler_server/src/generated/greetings/greeting.dart'
-    as _i6;
+    as _i7;
 import 'package:serverpod_flutter_butler_server/src/generated/protocol.dart';
 import 'package:serverpod_flutter_butler_server/src/generated/endpoints.dart';
 export 'package:serverpod_test/serverpod_test_public_exports.dart';
@@ -132,7 +134,11 @@ class TestEndpoints {
 
   late final _JwtRefreshEndpoint jwtRefresh;
 
+  late final _FocusEndpoint focus;
+
   late final _TasksEndpoint tasks;
+
+  late final _TimerEndpoint timer;
 
   late final _GreetingEndpoint greeting;
 }
@@ -156,7 +162,15 @@ class _InternalTestEndpoints extends TestEndpoints
       endpoints,
       serializationManager,
     );
+    focus = _FocusEndpoint(
+      endpoints,
+      serializationManager,
+    );
     tasks = _TasksEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    timer = _TimerEndpoint(
       endpoints,
       serializationManager,
     );
@@ -503,6 +517,78 @@ class _JwtRefreshEndpoint {
   }
 }
 
+class _FocusEndpoint {
+  _FocusEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _i2.EndpointDispatch _endpointDispatch;
+
+  final _i2.SerializationManager _serializationManager;
+
+  _i3.Future<_i5.FocusSession> startSession(
+    _i1.TestSessionBuilder sessionBuilder,
+    int durationMinutes,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'focus',
+            method: 'startSession',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'focus',
+          methodName: 'startSession',
+          parameters: _i1.testObjectToJson({
+            'durationMinutes': durationMinutes,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i5.FocusSession>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<void> stopSession(_i1.TestSessionBuilder sessionBuilder) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'focus',
+            method: 'stopSession',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'focus',
+          methodName: 'stopSession',
+          parameters: _i1.testObjectToJson({}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<void>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
 class _TasksEndpoint {
   _TasksEndpoint(
     this._endpointDispatch,
@@ -513,7 +599,7 @@ class _TasksEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<List<_i5.Task>> getAllTasks(
+  _i3.Future<List<_i6.Task>> getAllTasks(
     _i1.TestSessionBuilder sessionBuilder,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -535,7 +621,7 @@ class _TasksEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<List<_i5.Task>>);
+                as _i3.Future<List<_i6.Task>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -543,9 +629,9 @@ class _TasksEndpoint {
     });
   }
 
-  _i3.Future<_i5.Task> addTask(
+  _i3.Future<_i6.Task> addTask(
     _i1.TestSessionBuilder sessionBuilder,
-    _i5.Task task,
+    _i6.Task task,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -566,7 +652,7 @@ class _TasksEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i5.Task>);
+                as _i3.Future<_i6.Task>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -574,9 +660,9 @@ class _TasksEndpoint {
     });
   }
 
-  _i3.Future<_i5.Task> updateTask(
+  _i3.Future<_i6.Task> updateTask(
     _i1.TestSessionBuilder sessionBuilder,
-    _i5.Task task,
+    _i6.Task task,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -597,7 +683,7 @@ class _TasksEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i5.Task>);
+                as _i3.Future<_i6.Task>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -607,7 +693,7 @@ class _TasksEndpoint {
 
   _i3.Future<bool> deleteTask(
     _i1.TestSessionBuilder sessionBuilder,
-    _i5.Task task,
+    _i6.Task task,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -635,6 +721,80 @@ class _TasksEndpoint {
       }
     });
   }
+
+  _i3.Future<List<String>> breakdownTask(
+    _i1.TestSessionBuilder sessionBuilder,
+    String description,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'tasks',
+            method: 'breakdownTask',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'tasks',
+          methodName: 'breakdownTask',
+          parameters: _i1.testObjectToJson({'description': description}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<List<String>>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
+class _TimerEndpoint {
+  _TimerEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _i2.EndpointDispatch _endpointDispatch;
+
+  final _i2.SerializationManager _serializationManager;
+
+  _i3.Stream<int> startTimer(
+    _i1.TestSessionBuilder sessionBuilder,
+    int durationSeconds,
+  ) {
+    var _localTestStreamManager = _i1.TestStreamManager<int>();
+    _i1.callStreamFunctionAndHandleExceptions(
+      () async {
+        var _localUniqueSession =
+            (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+              endpoint: 'timer',
+              method: 'startTimer',
+            );
+        var _localCallContext = await _endpointDispatch
+            .getMethodStreamCallContext(
+              createSessionCallback: (_) => _localUniqueSession,
+              endpointPath: 'timer',
+              methodName: 'startTimer',
+              arguments: {'durationSeconds': durationSeconds},
+              requestedInputStreams: [],
+              serializationManager: _serializationManager,
+            );
+        await _localTestStreamManager.callStreamMethod(
+          _localCallContext,
+          _localUniqueSession,
+          {},
+        );
+      },
+      _localTestStreamManager.outputStreamController,
+    );
+    return _localTestStreamManager.outputStreamController.stream;
+  }
 }
 
 class _GreetingEndpoint {
@@ -647,7 +807,7 @@ class _GreetingEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i6.Greeting> hello(
+  _i3.Future<_i7.Greeting> hello(
     _i1.TestSessionBuilder sessionBuilder,
     String name,
   ) async {
@@ -670,7 +830,7 @@ class _GreetingEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<_i6.Greeting>);
+                as _i3.Future<_i7.Greeting>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();

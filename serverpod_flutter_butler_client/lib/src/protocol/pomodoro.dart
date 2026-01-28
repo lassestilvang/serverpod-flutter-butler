@@ -19,7 +19,6 @@ abstract class Pomodoro implements _i1.SerializableModel {
   Pomodoro._({
     this.id,
     required this.taskId,
-    required this.taskId,
     this.task,
     required this.startTime,
     required this.endTime,
@@ -29,7 +28,6 @@ abstract class Pomodoro implements _i1.SerializableModel {
 
   factory Pomodoro({
     int? id,
-    required int taskId,
     required int taskId,
     _i2.Task? task,
     required DateTime startTime,
@@ -61,8 +59,6 @@ abstract class Pomodoro implements _i1.SerializableModel {
 
   int taskId;
 
-  int taskId;
-
   _i2.Task? task;
 
   DateTime startTime;
@@ -79,7 +75,6 @@ abstract class Pomodoro implements _i1.SerializableModel {
   Pomodoro copyWith({
     int? id,
     int? taskId,
-    int? taskId,
     _i2.Task? task,
     DateTime? startTime,
     DateTime? endTime,
@@ -91,7 +86,6 @@ abstract class Pomodoro implements _i1.SerializableModel {
     return {
       '__className__': 'Pomodoro',
       if (id != null) 'id': id,
-      'taskId': taskId,
       'taskId': taskId,
       if (task != null) 'task': task?.toJson(),
       'startTime': startTime.toJson(),
@@ -112,7 +106,6 @@ class _Undefined {}
 class _PomodoroImpl extends Pomodoro {
   _PomodoroImpl({
     int? id,
-    required int taskId,
     required int taskId,
     _i2.Task? task,
     required DateTime startTime,
@@ -135,7 +128,6 @@ class _PomodoroImpl extends Pomodoro {
   @override
   Pomodoro copyWith({
     Object? id = _Undefined,
-    int? taskId,
     int? taskId,
     Object? task = _Undefined,
     DateTime? startTime,

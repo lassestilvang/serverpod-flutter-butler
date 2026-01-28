@@ -1,7 +1,6 @@
 class: Pomodoro
 table: pomodoro
 fields:
-  taskId: int
   task: Task?, relation
   startTime: DateTime
   endTime: DateTime

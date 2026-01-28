@@ -16,10 +16,12 @@ import 'package:serverpod_client/serverpod_client.dart' as _i2;
 import 'dart:async' as _i3;
 import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
     as _i4;
-import 'package:serverpod_flutter_butler_client/src/protocol/task.dart' as _i5;
+import 'package:serverpod_flutter_butler_client/src/protocol/focus_session.dart'
+    as _i5;
+import 'package:serverpod_flutter_butler_client/src/protocol/task.dart' as _i6;
 import 'package:serverpod_flutter_butler_client/src/protocol/greetings/greeting.dart'
-    as _i6;
-import 'protocol.dart' as _i7;
+    as _i7;
+import 'protocol.dart' as _i8;
 
 /// By extending [EmailIdpBaseEndpoint], the email identity provider endpoints
 /// are made available on the server and enable the corresponding sign-in widget
@@ -261,6 +263,29 @@ class EndpointJwtRefresh extends _i4.EndpointRefreshJwtTokens {
 }
 
 /// {@category Endpoint}
+class EndpointFocus extends _i2.EndpointRef {
+  EndpointFocus(_i2.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'focus';
+
+  /// Starts a Deep Work session for the given duration (in minutes).
+  _i3.Future<_i5.FocusSession> startSession(int durationMinutes) =>
+      caller.callServerEndpoint<_i5.FocusSession>(
+        'focus',
+        'startSession',
+        {'durationMinutes': durationMinutes},
+      );
+
+  /// Manually stops the current active session.
+  _i3.Future<void> stopSession() => caller.callServerEndpoint<void>(
+    'focus',
+    'stopSession',
+    {},
+  );
+}
+
+/// {@category Endpoint}
 class EndpointTasks extends _i2.EndpointRef {
   EndpointTasks(_i2.EndpointCaller caller) : super(caller);
 
@@ -268,35 +293,61 @@ class EndpointTasks extends _i2.EndpointRef {
   String get name => 'tasks';
 
   /// Fetches all tasks from the database.
-  _i3.Future<List<_i5.Task>> getAllTasks() =>
-      caller.callServerEndpoint<List<_i5.Task>>(
+  _i3.Future<List<_i6.Task>> getAllTasks() =>
+      caller.callServerEndpoint<List<_i6.Task>>(
         'tasks',
         'getAllTasks',
         {},
       );
 
   /// Adds a new task to the database.
-  _i3.Future<_i5.Task> addTask(_i5.Task task) =>
-      caller.callServerEndpoint<_i5.Task>(
+  _i3.Future<_i6.Task> addTask(_i6.Task task) =>
+      caller.callServerEndpoint<_i6.Task>(
         'tasks',
         'addTask',
         {'task': task},
       );
 
   /// Updates an existing task in the database.
-  _i3.Future<_i5.Task> updateTask(_i5.Task task) =>
-      caller.callServerEndpoint<_i5.Task>(
+  _i3.Future<_i6.Task> updateTask(_i6.Task task) =>
+      caller.callServerEndpoint<_i6.Task>(
         'tasks',
         'updateTask',
         {'task': task},
       );
 
   /// Deletes a task from the database.
-  _i3.Future<bool> deleteTask(_i5.Task task) => caller.callServerEndpoint<bool>(
+  _i3.Future<bool> deleteTask(_i6.Task task) => caller.callServerEndpoint<bool>(
     'tasks',
     'deleteTask',
     {'task': task},
   );
+
+  /// Breaks down a complex task into subtasks using Gemini AI.
+  _i3.Future<List<String>> breakdownTask(String description) =>
+      caller.callServerEndpoint<List<String>>(
+        'tasks',
+        'breakdownTask',
+        {'description': description},
+      );
+}
+
+/// {@category Endpoint}
+class EndpointTimer extends _i2.EndpointRef {
+  EndpointTimer(_i2.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'timer';
+
+  /// Starts a streaming timer for the specified duration (in seconds).
+  /// Returns a stream of integers representing the seconds remaining.
+  _i3.Stream<int> startTimer(int durationSeconds) =>
+      caller.callStreamingServerEndpoint<_i3.Stream<int>, int>(
+        'timer',
+        'startTimer',
+        {'durationSeconds': durationSeconds},
+        {},
+      );
 }
 
 /// This is an example endpoint that returns a greeting message through
@@ -309,8 +360,8 @@ class EndpointGreeting extends _i2.EndpointRef {
   String get name => 'greeting';
 
   /// Returns a personalized greeting message: "Hello {name}".
-  _i3.Future<_i6.Greeting> hello(String name) =>
-      caller.callServerEndpoint<_i6.Greeting>(
+  _i3.Future<_i7.Greeting> hello(String name) =>
+      caller.callServerEndpoint<_i7.Greeting>(
         'greeting',
         'hello',
         {'name': name},
@@ -348,7 +399,7 @@ class Client extends _i2.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
          host,
-         _i7.Protocol(),
+         _i8.Protocol(),
          securityContext: securityContext,
          streamingConnectionTimeout: streamingConnectionTimeout,
          connectionTimeout: connectionTimeout,
@@ -360,7 +411,9 @@ class Client extends _i2.ServerpodClientShared {
     emailIdp = EndpointEmailIdp(this);
     googleIdp = EndpointGoogleIdp(this);
     jwtRefresh = EndpointJwtRefresh(this);
+    focus = EndpointFocus(this);
     tasks = EndpointTasks(this);
+    timer = EndpointTimer(this);
     greeting = EndpointGreeting(this);
     modules = Modules(this);
   }
@@ -371,7 +424,11 @@ class Client extends _i2.ServerpodClientShared {
 
   late final EndpointJwtRefresh jwtRefresh;
 
+  late final EndpointFocus focus;
+
   late final EndpointTasks tasks;
+
+  late final EndpointTimer timer;
 
   late final EndpointGreeting greeting;
 
@@ -382,7 +439,9 @@ class Client extends _i2.ServerpodClientShared {
     'emailIdp': emailIdp,
     'googleIdp': googleIdp,
     'jwtRefresh': jwtRefresh,
+    'focus': focus,
     'tasks': tasks,
+    'timer': timer,
     'greeting': greeting,
   };
 

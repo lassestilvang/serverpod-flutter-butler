@@ -10,10 +10,16 @@ googleIdp:
   - login:
 jwtRefresh:
   - refreshAccessToken:
+focus:
+  - startSession:
+  - stopSession:
 tasks:
   - getAllTasks:
   - addTask:
   - updateTask:
   - deleteTask:
+  - breakdownTask:
+timer:
+  - startTimer:
 greeting:
   - hello:

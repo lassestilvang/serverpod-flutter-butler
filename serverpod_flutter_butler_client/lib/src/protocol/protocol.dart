@@ -87,6 +87,9 @@ class Protocol extends _i1.SerializationManager {
     if (t == List<_i6.Task>) {
       return (data as List).map((e) => deserialize<_i6.Task>(e)).toList() as T;
     }
+    if (t == List<String>) {
+      return (data as List).map((e) => deserialize<String>(e)).toList() as T;
+    }
     try {
       return _i7.Protocol().deserialize<T>(data, t);
     } on _i1.DeserializationTypeNotFoundException catch (_) {}

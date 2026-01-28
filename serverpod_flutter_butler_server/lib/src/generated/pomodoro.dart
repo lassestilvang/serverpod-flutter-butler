@@ -21,7 +21,6 @@ abstract class Pomodoro
   Pomodoro._({
     this.id,
     required this.taskId,
-    required this.taskId,
     this.task,
     required this.startTime,
     required this.endTime,
@@ -31,7 +30,6 @@ abstract class Pomodoro
 
   factory Pomodoro({
     int? id,
-    required int taskId,
     required int taskId,
     _i2.Task? task,
     required DateTime startTime,
@@ -65,8 +63,6 @@ abstract class Pomodoro
 
   int taskId;
 
-  int taskId;
-
   _i2.Task? task;
 
   DateTime startTime;
@@ -86,7 +82,6 @@ abstract class Pomodoro
   Pomodoro copyWith({
     int? id,
     int? taskId,
-    int? taskId,
     _i2.Task? task,
     DateTime? startTime,
     DateTime? endTime,
@@ -98,7 +93,6 @@ abstract class Pomodoro
     return {
       '__className__': 'Pomodoro',
       if (id != null) 'id': id,
-      'taskId': taskId,
       'taskId': taskId,
       if (task != null) 'task': task?.toJson(),
       'startTime': startTime.toJson(),
@@ -113,7 +107,6 @@ abstract class Pomodoro
     return {
       '__className__': 'Pomodoro',
       if (id != null) 'id': id,
-      'taskId': taskId,
       'taskId': taskId,
       if (task != null) 'task': task?.toJsonForProtocol(),
       'startTime': startTime.toJson(),
@@ -159,7 +152,6 @@ class _PomodoroImpl extends Pomodoro {
   _PomodoroImpl({
     int? id,
     required int taskId,
-    required int taskId,
     _i2.Task? task,
     required DateTime startTime,
     required DateTime endTime,
@@ -182,7 +174,6 @@ class _PomodoroImpl extends Pomodoro {
   Pomodoro copyWith({
     Object? id = _Undefined,
     int? taskId,
-    int? taskId,
     Object? task = _Undefined,
     DateTime? startTime,
     DateTime? endTime,
@@ -203,11 +194,6 @@ class _PomodoroImpl extends Pomodoro {
 
 class PomodoroUpdateTable extends _i1.UpdateTable<PomodoroTable> {
   PomodoroUpdateTable(super.table);
-
-  _i1.ColumnValue<int, int> taskId(int value) => _i1.ColumnValue(
-    table.taskId,
-    value,
-  );
 
   _i1.ColumnValue<int, int> taskId(int value) => _i1.ColumnValue(
     table.taskId,
@@ -244,10 +230,6 @@ class PomodoroTable extends _i1.Table<int?> {
       'taskId',
       this,
     );
-    taskId = _i1.ColumnInt(
-      'taskId',
-      this,
-    );
     startTime = _i1.ColumnDateTime(
       'startTime',
       this,
@@ -267,8 +249,6 @@ class PomodoroTable extends _i1.Table<int?> {
   }
 
   late final PomodoroUpdateTable updateTable;
-
-  late final _i1.ColumnInt taskId;
 
   late final _i1.ColumnInt taskId;
 
@@ -298,7 +278,6 @@ class PomodoroTable extends _i1.Table<int?> {
   @override
   List<_i1.Column> get columns => [
     id,
-    taskId,
     taskId,
     startTime,
     endTime,

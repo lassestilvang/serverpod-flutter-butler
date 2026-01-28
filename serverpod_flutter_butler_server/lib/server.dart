@@ -4,6 +4,7 @@ import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_idp_server/core.dart';
 import 'package:serverpod_auth_idp_server/providers/email.dart';
 import 'package:serverpod_auth_idp_server/providers/google.dart';
+import 'src/future_calls/end_session_call.dart';
 
 import 'src/generated/endpoints.dart';
 import 'src/generated/protocol.dart';
@@ -33,6 +34,9 @@ void run(List<String> args) async {
       GoogleIdpConfigFromPasswords(),
     ],
   );
+
+  // Register Future Calls
+  pod.registerFutureCall(EndSessionCall(), 'endSessionCall');
 
   // Setup a default page at the web root.
   // These are used by the default page.

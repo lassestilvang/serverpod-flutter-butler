@@ -20,9 +20,7 @@ abstract class Task implements _i1.SerializableModel {
     this.id,
     required this.title,
     this.description,
-    required this.estimatedPomodoros,
     required this.isCompleted,
-    this.parentTaskId,
     required this.parentTaskId,
     this.parentTask,
   });
@@ -31,9 +29,7 @@ abstract class Task implements _i1.SerializableModel {
     int? id,
     required String title,
     String? description,
-    required int estimatedPomodoros,
     required bool isCompleted,
-    int? parentTaskId,
     required int parentTaskId,
     _i2.Task? parentTask,
   }) = _TaskImpl;
@@ -43,7 +39,6 @@ abstract class Task implements _i1.SerializableModel {
       id: jsonSerialization['id'] as int?,
       title: jsonSerialization['title'] as String,
       description: jsonSerialization['description'] as String?,
-      estimatedPomodoros: jsonSerialization['estimatedPomodoros'] as int,
       isCompleted: jsonSerialization['isCompleted'] as bool,
       parentTaskId: jsonSerialization['parentTaskId'] as int,
       parentTask: jsonSerialization['parentTask'] == null
@@ -63,11 +58,7 @@ abstract class Task implements _i1.SerializableModel {
 
   String? description;
 
-  int estimatedPomodoros;
-
   bool isCompleted;
-
-  int? parentTaskId;
 
   int parentTaskId;
 
@@ -80,9 +71,7 @@ abstract class Task implements _i1.SerializableModel {
     int? id,
     String? title,
     String? description,
-    int? estimatedPomodoros,
     bool? isCompleted,
-    int? parentTaskId,
     int? parentTaskId,
     _i2.Task? parentTask,
   });
@@ -93,9 +82,7 @@ abstract class Task implements _i1.SerializableModel {
       if (id != null) 'id': id,
       'title': title,
       if (description != null) 'description': description,
-      'estimatedPomodoros': estimatedPomodoros,
       'isCompleted': isCompleted,
-      if (parentTaskId != null) 'parentTaskId': parentTaskId,
       'parentTaskId': parentTaskId,
       if (parentTask != null) 'parentTask': parentTask?.toJson(),
     };
@@ -114,16 +101,13 @@ class _TaskImpl extends Task {
     int? id,
     required String title,
     String? description,
-    required int estimatedPomodoros,
     required bool isCompleted,
-    int? parentTaskId,
     required int parentTaskId,
     _i2.Task? parentTask,
   }) : super._(
          id: id,
          title: title,
          description: description,
-         estimatedPomodoros: estimatedPomodoros,
          isCompleted: isCompleted,
          parentTaskId: parentTaskId,
          parentTask: parentTask,
@@ -137,9 +121,7 @@ class _TaskImpl extends Task {
     Object? id = _Undefined,
     String? title,
     Object? description = _Undefined,
-    int? estimatedPomodoros,
     bool? isCompleted,
-    Object? parentTaskId = _Undefined,
     int? parentTaskId,
     Object? parentTask = _Undefined,
   }) {
@@ -147,7 +129,6 @@ class _TaskImpl extends Task {
       id: id is int? ? id : this.id,
       title: title ?? this.title,
       description: description is String? ? description : this.description,
-      estimatedPomodoros: estimatedPomodoros ?? this.estimatedPomodoros,
       isCompleted: isCompleted ?? this.isCompleted,
       parentTaskId: parentTaskId ?? this.parentTaskId,
       parentTask: parentTask is _i2.Task?

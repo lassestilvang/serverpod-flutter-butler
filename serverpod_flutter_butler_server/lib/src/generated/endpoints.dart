@@ -14,13 +14,15 @@ import 'package:serverpod/serverpod.dart' as _i1;
 import '../auth/email_idp_endpoint.dart' as _i2;
 import '../auth/google_idp_endpoint.dart' as _i3;
 import '../auth/jwt_refresh_endpoint.dart' as _i4;
-import '../endpoints/tasks_endpoint.dart' as _i5;
-import '../greetings/greeting_endpoint.dart' as _i6;
-import 'package:serverpod_flutter_butler_server/src/generated/task.dart' as _i7;
+import '../endpoints/focus_endpoint.dart' as _i5;
+import '../endpoints/tasks_endpoint.dart' as _i6;
+import '../endpoints/timer_endpoint.dart' as _i7;
+import '../greetings/greeting_endpoint.dart' as _i8;
+import 'package:serverpod_flutter_butler_server/src/generated/task.dart' as _i9;
 import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
-    as _i8;
+    as _i10;
 import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
-    as _i9;
+    as _i11;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
@@ -44,13 +46,25 @@ class Endpoints extends _i1.EndpointDispatch {
           'jwtRefresh',
           null,
         ),
-      'tasks': _i5.TasksEndpoint()
+      'focus': _i5.FocusEndpoint()
+        ..initialize(
+          server,
+          'focus',
+          null,
+        ),
+      'tasks': _i6.TasksEndpoint()
         ..initialize(
           server,
           'tasks',
           null,
         ),
-      'greeting': _i6.GreetingEndpoint()
+      'timer': _i7.TimerEndpoint()
+        ..initialize(
+          server,
+          'timer',
+          null,
+        ),
+      'greeting': _i8.GreetingEndpoint()
         ..initialize(
           server,
           'greeting',
@@ -282,6 +296,41 @@ class Endpoints extends _i1.EndpointDispatch {
         ),
       },
     );
+    connectors['focus'] = _i1.EndpointConnector(
+      name: 'focus',
+      endpoint: endpoints['focus']!,
+      methodConnectors: {
+        'startSession': _i1.MethodConnector(
+          name: 'startSession',
+          params: {
+            'durationMinutes': _i1.ParameterDescription(
+              name: 'durationMinutes',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['focus'] as _i5.FocusEndpoint).startSession(
+                session,
+                params['durationMinutes'],
+              ),
+        ),
+        'stopSession': _i1.MethodConnector(
+          name: 'stopSession',
+          params: {},
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['focus'] as _i5.FocusEndpoint).stopSession(
+                session,
+              ),
+        ),
+      },
+    );
     connectors['tasks'] = _i1.EndpointConnector(
       name: 'tasks',
       endpoint: endpoints['tasks']!,
@@ -293,7 +342,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['tasks'] as _i5.TasksEndpoint).getAllTasks(
+              ) async => (endpoints['tasks'] as _i6.TasksEndpoint).getAllTasks(
                 session,
               ),
         ),
@@ -302,7 +351,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'task': _i1.ParameterDescription(
               name: 'task',
-              type: _i1.getType<_i7.Task>(),
+              type: _i1.getType<_i9.Task>(),
               nullable: false,
             ),
           },
@@ -310,7 +359,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['tasks'] as _i5.TasksEndpoint).addTask(
+              ) async => (endpoints['tasks'] as _i6.TasksEndpoint).addTask(
                 session,
                 params['task'],
               ),
@@ -320,7 +369,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'task': _i1.ParameterDescription(
               name: 'task',
-              type: _i1.getType<_i7.Task>(),
+              type: _i1.getType<_i9.Task>(),
               nullable: false,
             ),
           },
@@ -328,7 +377,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['tasks'] as _i5.TasksEndpoint).updateTask(
+              ) async => (endpoints['tasks'] as _i6.TasksEndpoint).updateTask(
                 session,
                 params['task'],
               ),
@@ -338,7 +387,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'task': _i1.ParameterDescription(
               name: 'task',
-              type: _i1.getType<_i7.Task>(),
+              type: _i1.getType<_i9.Task>(),
               nullable: false,
             ),
           },
@@ -346,9 +395,55 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['tasks'] as _i5.TasksEndpoint).deleteTask(
+              ) async => (endpoints['tasks'] as _i6.TasksEndpoint).deleteTask(
                 session,
                 params['task'],
+              ),
+        ),
+        'breakdownTask': _i1.MethodConnector(
+          name: 'breakdownTask',
+          params: {
+            'description': _i1.ParameterDescription(
+              name: 'description',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['tasks'] as _i6.TasksEndpoint).breakdownTask(
+                    session,
+                    params['description'],
+                  ),
+        ),
+      },
+    );
+    connectors['timer'] = _i1.EndpointConnector(
+      name: 'timer',
+      endpoint: endpoints['timer']!,
+      methodConnectors: {
+        'startTimer': _i1.MethodStreamConnector(
+          name: 'startTimer',
+          params: {
+            'durationSeconds': _i1.ParameterDescription(
+              name: 'durationSeconds',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+          },
+          streamParams: {},
+          returnType: _i1.MethodStreamReturnType.streamType,
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+                Map<String, Stream> streamParams,
+              ) => (endpoints['timer'] as _i7.TimerEndpoint).startTimer(
+                session,
+                params['durationSeconds'],
               ),
         ),
       },
@@ -370,16 +465,16 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['greeting'] as _i6.GreetingEndpoint).hello(
+              ) async => (endpoints['greeting'] as _i8.GreetingEndpoint).hello(
                 session,
                 params['name'],
               ),
         ),
       },
     );
-    modules['serverpod_auth_idp'] = _i8.Endpoints()
+    modules['serverpod_auth_idp'] = _i10.Endpoints()
       ..initializeEndpoints(server);
-    modules['serverpod_auth_core'] = _i9.Endpoints()
+    modules['serverpod_auth_core'] = _i11.Endpoints()
       ..initializeEndpoints(server);
   }
 }

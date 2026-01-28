@@ -21,9 +21,7 @@ abstract class Task implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
     this.id,
     required this.title,
     this.description,
-    required this.estimatedPomodoros,
     required this.isCompleted,
-    this.parentTaskId,
     required this.parentTaskId,
     this.parentTask,
   });
@@ -32,9 +30,7 @@ abstract class Task implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
     int? id,
     required String title,
     String? description,
-    required int estimatedPomodoros,
     required bool isCompleted,
-    int? parentTaskId,
     required int parentTaskId,
     _i2.Task? parentTask,
   }) = _TaskImpl;
@@ -44,7 +40,6 @@ abstract class Task implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
       id: jsonSerialization['id'] as int?,
       title: jsonSerialization['title'] as String,
       description: jsonSerialization['description'] as String?,
-      estimatedPomodoros: jsonSerialization['estimatedPomodoros'] as int,
       isCompleted: jsonSerialization['isCompleted'] as bool,
       parentTaskId: jsonSerialization['parentTaskId'] as int,
       parentTask: jsonSerialization['parentTask'] == null
@@ -66,11 +61,7 @@ abstract class Task implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
 
   String? description;
 
-  int estimatedPomodoros;
-
   bool isCompleted;
-
-  int? parentTaskId;
 
   int parentTaskId;
 
@@ -86,9 +77,7 @@ abstract class Task implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
     int? id,
     String? title,
     String? description,
-    int? estimatedPomodoros,
     bool? isCompleted,
-    int? parentTaskId,
     int? parentTaskId,
     _i2.Task? parentTask,
   });
@@ -99,9 +88,7 @@ abstract class Task implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
       if (id != null) 'id': id,
       'title': title,
       if (description != null) 'description': description,
-      'estimatedPomodoros': estimatedPomodoros,
       'isCompleted': isCompleted,
-      if (parentTaskId != null) 'parentTaskId': parentTaskId,
       'parentTaskId': parentTaskId,
       if (parentTask != null) 'parentTask': parentTask?.toJson(),
     };
@@ -114,9 +101,7 @@ abstract class Task implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
       if (id != null) 'id': id,
       'title': title,
       if (description != null) 'description': description,
-      'estimatedPomodoros': estimatedPomodoros,
       'isCompleted': isCompleted,
-      if (parentTaskId != null) 'parentTaskId': parentTaskId,
       'parentTaskId': parentTaskId,
       if (parentTask != null) 'parentTask': parentTask?.toJsonForProtocol(),
     };
@@ -159,16 +144,13 @@ class _TaskImpl extends Task {
     int? id,
     required String title,
     String? description,
-    required int estimatedPomodoros,
     required bool isCompleted,
-    int? parentTaskId,
     required int parentTaskId,
     _i2.Task? parentTask,
   }) : super._(
          id: id,
          title: title,
          description: description,
-         estimatedPomodoros: estimatedPomodoros,
          isCompleted: isCompleted,
          parentTaskId: parentTaskId,
          parentTask: parentTask,
@@ -182,9 +164,7 @@ class _TaskImpl extends Task {
     Object? id = _Undefined,
     String? title,
     Object? description = _Undefined,
-    int? estimatedPomodoros,
     bool? isCompleted,
-    Object? parentTaskId = _Undefined,
     int? parentTaskId,
     Object? parentTask = _Undefined,
   }) {
@@ -192,7 +172,6 @@ class _TaskImpl extends Task {
       id: id is int? ? id : this.id,
       title: title ?? this.title,
       description: description is String? ? description : this.description,
-      estimatedPomodoros: estimatedPomodoros ?? this.estimatedPomodoros,
       isCompleted: isCompleted ?? this.isCompleted,
       parentTaskId: parentTaskId ?? this.parentTaskId,
       parentTask: parentTask is _i2.Task?
@@ -215,18 +194,8 @@ class TaskUpdateTable extends _i1.UpdateTable<TaskTable> {
     value,
   );
 
-  _i1.ColumnValue<int, int> estimatedPomodoros(int value) => _i1.ColumnValue(
-    table.estimatedPomodoros,
-    value,
-  );
-
   _i1.ColumnValue<bool, bool> isCompleted(bool value) => _i1.ColumnValue(
     table.isCompleted,
-    value,
-  );
-
-  _i1.ColumnValue<int, int> parentTaskId(int? value) => _i1.ColumnValue(
-    table.parentTaskId,
     value,
   );
 
@@ -247,16 +216,8 @@ class TaskTable extends _i1.Table<int?> {
       'description',
       this,
     );
-    estimatedPomodoros = _i1.ColumnInt(
-      'estimatedPomodoros',
-      this,
-    );
     isCompleted = _i1.ColumnBool(
       'isCompleted',
-      this,
-    );
-    parentTaskId = _i1.ColumnInt(
-      'parentTaskId',
       this,
     );
     parentTaskId = _i1.ColumnInt(
@@ -271,11 +232,7 @@ class TaskTable extends _i1.Table<int?> {
 
   late final _i1.ColumnString description;
 
-  late final _i1.ColumnInt estimatedPomodoros;
-
   late final _i1.ColumnBool isCompleted;
-
-  late final _i1.ColumnInt parentTaskId;
 
   late final _i1.ColumnInt parentTaskId;
 
@@ -299,9 +256,7 @@ class TaskTable extends _i1.Table<int?> {
     id,
     title,
     description,
-    estimatedPomodoros,
     isCompleted,
-    parentTaskId,
     parentTaskId,
   ];
 

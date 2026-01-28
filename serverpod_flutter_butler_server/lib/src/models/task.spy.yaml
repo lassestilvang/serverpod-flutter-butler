@@ -3,9 +3,6 @@ table: task
 fields:
   title: String
   description: String?
-  # The estimated number of Pomodoros for this task.
-  estimatedPomodoros: int
   isCompleted: bool
   # Parent task for subtasks
-  parentTaskId: int?
   parentTask: Task?, relation

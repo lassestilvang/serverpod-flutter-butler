@@ -116,12 +116,6 @@ class Protocol extends _i1.SerializationManagerServer {
           dartType: 'int',
         ),
         _i2.ColumnDefinition(
-          name: 'taskId',
-          columnType: _i2.ColumnType.bigint,
-          isNullable: false,
-          dartType: 'int',
-        ),
-        _i2.ColumnDefinition(
           name: 'startTime',
           columnType: _i2.ColumnType.timestampWithoutTimeZone,
           isNullable: false,
@@ -201,22 +195,10 @@ class Protocol extends _i1.SerializationManagerServer {
           dartType: 'String?',
         ),
         _i2.ColumnDefinition(
-          name: 'estimatedPomodoros',
-          columnType: _i2.ColumnType.bigint,
-          isNullable: false,
-          dartType: 'int',
-        ),
-        _i2.ColumnDefinition(
           name: 'isCompleted',
           columnType: _i2.ColumnType.boolean,
           isNullable: false,
           dartType: 'bool',
-        ),
-        _i2.ColumnDefinition(
-          name: 'parentTaskId',
-          columnType: _i2.ColumnType.bigint,
-          isNullable: true,
-          dartType: 'int?',
         ),
         _i2.ColumnDefinition(
           name: 'parentTaskId',
@@ -312,6 +294,9 @@ class Protocol extends _i1.SerializationManagerServer {
     }
     if (t == List<_i9.Task>) {
       return (data as List).map((e) => deserialize<_i9.Task>(e)).toList() as T;
+    }
+    if (t == List<String>) {
+      return (data as List).map((e) => deserialize<String>(e)).toList() as T;
     }
     try {
       return _i3.Protocol().deserialize<T>(data, t);
