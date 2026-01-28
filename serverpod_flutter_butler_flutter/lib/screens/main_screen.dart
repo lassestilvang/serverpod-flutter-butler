@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'timebox_screen.dart';
+import 'dashboard_screen.dart';
 import 'deep_work_screen.dart';
 import 'insight_screen.dart';
 
@@ -14,7 +14,7 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
-    const TimeBoxScreen(),
+    const DashboardScreen(),
     const DeepWorkScreen(),
     const InsightScreen(),
   ];
