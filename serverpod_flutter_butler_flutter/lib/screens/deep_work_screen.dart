@@ -56,7 +56,7 @@ class _DeepWorkScreenState extends State<DeepWorkScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              _isSessionActive ? Colors.nightlight_round : Colors.sunny,
+              _isSessionActive ? Icons.nightlight_round : Icons.sunny,
               size: 100,
               color: _isSessionActive ? Colors.deepPurple : Colors.orange,
             ),

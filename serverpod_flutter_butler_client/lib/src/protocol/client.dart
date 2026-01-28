@@ -277,6 +277,13 @@ class EndpointAnalytics extends _i2.EndpointRef {
         'getDailyStats',
         {},
       );
+
+  /// Generates an AI summary of today's completed tasks.
+  _i3.Future<String> getDailySummary() => caller.callServerEndpoint<String>(
+    'analytics',
+    'getDailySummary',
+    {},
+  );
 }
 
 /// {@category Endpoint}

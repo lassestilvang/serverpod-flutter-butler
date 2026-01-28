@@ -21,7 +21,7 @@ abstract class Task implements _i1.SerializableModel {
     required this.title,
     this.description,
     required this.isCompleted,
-    required this.parentTaskId,
+    this.parentTaskId,
     this.parentTask,
   });
 
@@ -30,7 +30,7 @@ abstract class Task implements _i1.SerializableModel {
     required String title,
     String? description,
     required bool isCompleted,
-    required int parentTaskId,
+    int? parentTaskId,
     _i2.Task? parentTask,
   }) = _TaskImpl;
 
@@ -40,7 +40,7 @@ abstract class Task implements _i1.SerializableModel {
       title: jsonSerialization['title'] as String,
       description: jsonSerialization['description'] as String?,
       isCompleted: jsonSerialization['isCompleted'] as bool,
-      parentTaskId: jsonSerialization['parentTaskId'] as int,
+      parentTaskId: jsonSerialization['parentTaskId'] as int?,
       parentTask: jsonSerialization['parentTask'] == null
           ? null
           : _i3.Protocol().deserialize<_i2.Task>(
@@ -60,7 +60,7 @@ abstract class Task implements _i1.SerializableModel {
 
   bool isCompleted;
 
-  int parentTaskId;
+  int? parentTaskId;
 
   _i2.Task? parentTask;
 
@@ -83,7 +83,7 @@ abstract class Task implements _i1.SerializableModel {
       'title': title,
       if (description != null) 'description': description,
       'isCompleted': isCompleted,
-      'parentTaskId': parentTaskId,
+      if (parentTaskId != null) 'parentTaskId': parentTaskId,
       if (parentTask != null) 'parentTask': parentTask?.toJson(),
     };
   }
@@ -102,7 +102,7 @@ class _TaskImpl extends Task {
     required String title,
     String? description,
     required bool isCompleted,
-    required int parentTaskId,
+    int? parentTaskId,
     _i2.Task? parentTask,
   }) : super._(
          id: id,
@@ -122,7 +122,7 @@ class _TaskImpl extends Task {
     String? title,
     Object? description = _Undefined,
     bool? isCompleted,
-    int? parentTaskId,
+    Object? parentTaskId = _Undefined,
     Object? parentTask = _Undefined,
   }) {
     return Task(
@@ -130,7 +130,7 @@ class _TaskImpl extends Task {
       title: title ?? this.title,
       description: description is String? ? description : this.description,
       isCompleted: isCompleted ?? this.isCompleted,
-      parentTaskId: parentTaskId ?? this.parentTaskId,
+      parentTaskId: parentTaskId is int? ? parentTaskId : this.parentTaskId,
       parentTask: parentTask is _i2.Task?
           ? parentTask
           : this.parentTask?.copyWith(),

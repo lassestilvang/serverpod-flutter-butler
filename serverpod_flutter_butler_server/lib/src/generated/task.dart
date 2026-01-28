@@ -22,7 +22,7 @@ abstract class Task implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
     required this.title,
     this.description,
     required this.isCompleted,
-    required this.parentTaskId,
+    this.parentTaskId,
     this.parentTask,
   });
 
@@ -31,7 +31,7 @@ abstract class Task implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
     required String title,
     String? description,
     required bool isCompleted,
-    required int parentTaskId,
+    int? parentTaskId,
     _i2.Task? parentTask,
   }) = _TaskImpl;
 
@@ -41,7 +41,7 @@ abstract class Task implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
       title: jsonSerialization['title'] as String,
       description: jsonSerialization['description'] as String?,
       isCompleted: jsonSerialization['isCompleted'] as bool,
-      parentTaskId: jsonSerialization['parentTaskId'] as int,
+      parentTaskId: jsonSerialization['parentTaskId'] as int?,
       parentTask: jsonSerialization['parentTask'] == null
           ? null
           : _i3.Protocol().deserialize<_i2.Task>(
@@ -63,7 +63,7 @@ abstract class Task implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
 
   bool isCompleted;
 
-  int parentTaskId;
+  int? parentTaskId;
 
   _i2.Task? parentTask;
 
@@ -89,7 +89,7 @@ abstract class Task implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
       'title': title,
       if (description != null) 'description': description,
       'isCompleted': isCompleted,
-      'parentTaskId': parentTaskId,
+      if (parentTaskId != null) 'parentTaskId': parentTaskId,
       if (parentTask != null) 'parentTask': parentTask?.toJson(),
     };
   }
@@ -102,7 +102,7 @@ abstract class Task implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
       'title': title,
       if (description != null) 'description': description,
       'isCompleted': isCompleted,
-      'parentTaskId': parentTaskId,
+      if (parentTaskId != null) 'parentTaskId': parentTaskId,
       if (parentTask != null) 'parentTask': parentTask?.toJsonForProtocol(),
     };
   }
@@ -145,7 +145,7 @@ class _TaskImpl extends Task {
     required String title,
     String? description,
     required bool isCompleted,
-    required int parentTaskId,
+    int? parentTaskId,
     _i2.Task? parentTask,
   }) : super._(
          id: id,
@@ -165,7 +165,7 @@ class _TaskImpl extends Task {
     String? title,
     Object? description = _Undefined,
     bool? isCompleted,
-    int? parentTaskId,
+    Object? parentTaskId = _Undefined,
     Object? parentTask = _Undefined,
   }) {
     return Task(
@@ -173,7 +173,7 @@ class _TaskImpl extends Task {
       title: title ?? this.title,
       description: description is String? ? description : this.description,
       isCompleted: isCompleted ?? this.isCompleted,
-      parentTaskId: parentTaskId ?? this.parentTaskId,
+      parentTaskId: parentTaskId is int? ? parentTaskId : this.parentTaskId,
       parentTask: parentTask is _i2.Task?
           ? parentTask
           : this.parentTask?.copyWith(),
@@ -199,7 +199,7 @@ class TaskUpdateTable extends _i1.UpdateTable<TaskTable> {
     value,
   );
 
-  _i1.ColumnValue<int, int> parentTaskId(int value) => _i1.ColumnValue(
+  _i1.ColumnValue<int, int> parentTaskId(int? value) => _i1.ColumnValue(
     table.parentTaskId,
     value,
   );
@@ -307,6 +307,8 @@ class TaskRepository {
   const TaskRepository._();
 
   final attachRow = const TaskAttachRowRepository._();
+
+  final detachRow = const TaskDetachRowRepository._();
 
   /// Returns a list of [Task]s matching the given query parameters.
   ///
@@ -583,6 +585,32 @@ class TaskAttachRowRepository {
     }
 
     var $task = task.copyWith(parentTaskId: parentTask.id);
+    await session.db.updateRow<Task>(
+      $task,
+      columns: [Task.t.parentTaskId],
+      transaction: transaction,
+    );
+  }
+}
+
+class TaskDetachRowRepository {
+  const TaskDetachRowRepository._();
+
+  /// Detaches the relation between this [Task] and the [Task] set in `parentTask`
+  /// by setting the [Task]'s foreign key `parentTaskId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> parentTask(
+    _i1.Session session,
+    Task task, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (task.id == null) {
+      throw ArgumentError.notNull('task.id');
+    }
+
+    var $task = task.copyWith(parentTaskId: null);
     await session.db.updateRow<Task>(
       $task,
       columns: [Task.t.parentTaskId],

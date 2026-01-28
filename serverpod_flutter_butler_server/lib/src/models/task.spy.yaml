@@ -4,5 +4,5 @@ fields:
   title: String
   description: String?
   isCompleted: bool
-  # Parent task for subtasks
-  parentTask: Task?, relation
+  # Parent task for subtasks (nullable self-relation)
+  parentTask: Task?, relation(optional)

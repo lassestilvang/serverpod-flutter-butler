@@ -96,13 +96,6 @@
         },
         {
           "__className__": "serverpod.ColumnDefinition",
-          "name": "taskId",
-          "columnType": 6,
-          "isNullable": false,
-          "dartType": "int"
-        },
-        {
-          "__className__": "serverpod.ColumnDefinition",
           "name": "startTime",
           "columnType": 4,
           "isNullable": false,
@@ -192,13 +185,6 @@
           "columnType": 0,
           "isNullable": true,
           "dartType": "String?"
-        },
-        {
-          "__className__": "serverpod.ColumnDefinition",
-          "name": "estimatedPomodoros",
-          "columnType": 6,
-          "isNullable": false,
-          "dartType": "int"
         },
         {
           "__className__": "serverpod.ColumnDefinition",
@@ -3027,7 +3013,7 @@
     {
       "__className__": "serverpod.DatabaseMigrationVersion",
       "module": "serverpod_flutter_butler",
-      "version": "20260128210922517"
+      "version": "20260128221934816"
     },
     {
       "__className__": "serverpod.DatabaseMigrationVersion",

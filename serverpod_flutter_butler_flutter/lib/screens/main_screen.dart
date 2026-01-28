@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'screens/timebox_screen.dart';
-import 'screens/deep_work_screen.dart';
-import 'screens/insight_screen.dart';
+import 'timebox_screen.dart';
+import 'deep_work_screen.dart';
+import 'insight_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});

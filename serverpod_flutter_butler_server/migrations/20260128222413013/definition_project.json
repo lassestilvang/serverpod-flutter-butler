@@ -96,13 +96,6 @@
         },
         {
           "__className__": "serverpod.ColumnDefinition",
-          "name": "taskId",
-          "columnType": 6,
-          "isNullable": false,
-          "dartType": "int"
-        },
-        {
-          "__className__": "serverpod.ColumnDefinition",
           "name": "startTime",
           "columnType": 4,
           "isNullable": false,
@@ -195,13 +188,6 @@
         },
         {
           "__className__": "serverpod.ColumnDefinition",
-          "name": "estimatedPomodoros",
-          "columnType": 6,
-          "isNullable": false,
-          "dartType": "int"
-        },
-        {
-          "__className__": "serverpod.ColumnDefinition",
           "name": "isCompleted",
           "columnType": 1,
           "isNullable": false,
@@ -213,13 +199,6 @@
           "columnType": 6,
           "isNullable": true,
           "dartType": "int?"
-        },
-        {
-          "__className__": "serverpod.ColumnDefinition",
-          "name": "parentTaskId",
-          "columnType": 6,
-          "isNullable": false,
-          "dartType": "int"
         }
       ],
       "foreignKeys": [

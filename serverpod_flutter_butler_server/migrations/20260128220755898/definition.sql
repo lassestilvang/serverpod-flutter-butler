@@ -47,7 +47,6 @@ CREATE TABLE "focus_session" (
 CREATE TABLE "pomodoro" (
     "id" bigserial PRIMARY KEY,
     "taskId" bigint NOT NULL,
-    "taskId" bigint NOT NULL,
     "startTime" timestamp without time zone NOT NULL,
     "endTime" timestamp without time zone NOT NULL,
     "durationSeconds" bigint NOT NULL,
@@ -61,9 +60,7 @@ CREATE TABLE "task" (
     "id" bigserial PRIMARY KEY,
     "title" text NOT NULL,
     "description" text,
-    "estimatedPomodoros" bigint NOT NULL,
     "isCompleted" boolean NOT NULL,
-    "parentTaskId" bigint,
     "parentTaskId" bigint NOT NULL
 );
 
@@ -674,9 +671,9 @@ ALTER TABLE ONLY "serverpod_auth_core_session"
 -- MIGRATION VERSION FOR serverpod_flutter_butler
 --
 INSERT INTO "serverpod_migrations" ("module", "version", "timestamp")
-    VALUES ('serverpod_flutter_butler', '20260128210922517', now())
+    VALUES ('serverpod_flutter_butler', '20260128220755898', now())
     ON CONFLICT ("module")
-    DO UPDATE SET "version" = '20260128210922517', "timestamp" = now();
+    DO UPDATE SET "version" = '20260128220755898', "timestamp" = now();
 
 --
 -- MIGRATION VERSION FOR serverpod

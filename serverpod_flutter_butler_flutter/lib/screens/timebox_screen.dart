@@ -85,11 +85,48 @@ class _TimeBoxScreenState extends State<TimeBoxScreen> {
   }
 
   Future<void> _createTask() async {
-    // TODO: Implement saving to DB via client.tasks.addTask
-    // For now, just show a snackbar
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Task creation not yet implemented')),
-    );
+    final title = _taskController.text.trim();
+    if (title.isEmpty || _subtasks.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please enter a task and generate subtasks first.')));
+        return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+        // 1. Save Main Task
+        final mainTask = Task(
+            title: title, 
+            isCompleted: false,
+        );
+        final savedMainTask = await client.tasks.addTask(mainTask);
+
+        // 2. Save Subtasks
+        for (final subtaskTitle in _subtasks) {
+            final subtask = Task(
+                title: subtaskTitle,
+                isCompleted: false,
+                parentTaskId: savedMainTask.id, 
+            );
+            await client.tasks.addTask(subtask);
+        }
+        
+        if (mounted) {
+             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Plan Saved Successfully! 💾')));
+             setState(() {
+               _taskController.clear();
+               _subtasks = [];
+             });
+        }
+    } catch (e) {
+        if (mounted) {
+             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error saving plan: $e')));
+        }
+    } finally {
+        if (mounted) {
+            setState(() => _isLoading = false);
+        }
+    }
   }
 
   @override

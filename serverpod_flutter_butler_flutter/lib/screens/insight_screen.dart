@@ -10,6 +10,7 @@ class InsightScreen extends StatefulWidget {
 
 class _InsightScreenState extends State<InsightScreen> {
   Map<String, int>? _stats;
+  String? _dailySummary; // Add state for summary
   bool _isLoading = true;
   String? _error;
 
@@ -22,9 +23,14 @@ class _InsightScreenState extends State<InsightScreen> {
   Future<void> _loadStats() async {
     try {
       final stats = await client.analytics.getDailyStats();
+      // Fetch summary in parallel or sequence? Sequence for simplicity, or future.wait
+      // Let's do sequence to ensure stats load first
+      final summary = await client.analytics.getDailySummary();
+      
       if (mounted) {
         setState(() {
           _stats = stats;
+          _dailySummary = summary;
           _isLoading = false;
         });
       }
@@ -66,6 +72,30 @@ class _InsightScreenState extends State<InsightScreen> {
                         Colors.blue,
                       ),
                       const SizedBox(height: 32),
+                      if (_dailySummary != null)
+                        Card(
+                          color: Colors.amber.shade50,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              children: [
+                                const Row(
+                                  children: [
+                                    Icon(Icons.auto_awesome, color: Colors.amber),
+                                    SizedBox(width: 8),
+                                    Text('AI Daily Report', style: TextStyle(fontWeight: FontWeight.bold)),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  _dailySummary!,
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      const SizedBox(height: 20),
                       const Text(
                         'Keep up the momentum! 🚀',
                         style: TextStyle(fontSize: 18, fontStyle: FontStyle.italic),

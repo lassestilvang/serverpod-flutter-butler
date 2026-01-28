@@ -49,4 +49,34 @@ class GeminiService {
       return [];
     }
   }
+
+  Future<String> generateDailySummary(Session session, List<String> completedTasks) async {
+    if (completedTasks.isEmpty) {
+      return 'No tasks completed yet. Time to get to work! 🚀';
+    }
+
+    try {
+      final model = GenerativeModel(
+        model: _modelName,
+        apiKey: _apiKey,
+      );
+
+      final prompt = 'Here are the tasks I completed today: ${completedTasks.join(", ")}. '
+          'Write a short, engaging, 2-sentence motivational summary of my achievements. '
+          'Use emojis.';
+
+      final content = [Content.text(prompt)];
+      final response = await model.generateContent(content);
+
+      return response.text ?? 'Great job with your tasks today!';
+    } catch (e, stackTrace) {
+      session.log(
+        'Gemini API Error (Summary)',
+        level: LogLevel.error,
+        exception: e,
+        stackTrace: stackTrace,
+      );
+      return 'You completed ${completedTasks.length} tasks! Keep it up.';
+    }
+  }
 }
