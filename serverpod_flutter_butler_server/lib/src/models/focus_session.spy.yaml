@@ -1,0 +1,9 @@
+class: FocusSession
+table: focus_session
+fields:
+  startTime: DateTime
+  plannedEndTime: DateTime
+  actualEndTime: DateTime?
+  isActive: bool
+  # Original Slack status text to restore later (mock integration)
+  slackStatusOriginal: String?

@@ -1,0 +1,19 @@
+emailIdp:
+  - login:
+  - startRegistration:
+  - verifyRegistrationCode:
+  - finishRegistration:
+  - startPasswordReset:
+  - verifyPasswordResetCode:
+  - finishPasswordReset:
+googleIdp:
+  - login:
+jwtRefresh:
+  - refreshAccessToken:
+tasks:
+  - getAllTasks:
+  - addTask:
+  - updateTask:
+  - deleteTask:
+greeting:
+  - hello:
