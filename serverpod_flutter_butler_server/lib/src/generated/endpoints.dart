@@ -342,6 +342,11 @@ class Endpoints extends _i1.EndpointDispatch {
               type: _i1.getType<int>(),
               nullable: false,
             ),
+            'taskId': _i1.ParameterDescription(
+              name: 'taskId',
+              type: _i1.getType<int?>(),
+              nullable: true,
+            ),
           },
           call:
               (
@@ -350,6 +355,7 @@ class Endpoints extends _i1.EndpointDispatch {
               ) async => (endpoints['focus'] as _i6.FocusEndpoint).startSession(
                 session,
                 params['durationMinutes'],
+                taskId: params['taskId'],
               ),
         ),
         'stopSession': _i1.MethodConnector(
@@ -452,6 +458,17 @@ class Endpoints extends _i1.EndpointDispatch {
                     session,
                     params['description'],
                   ),
+        ),
+        'getButlerTip': _i1.MethodConnector(
+          name: 'getButlerTip',
+          params: {},
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['tasks'] as _i7.TasksEndpoint).getButlerTip(
+                session,
+              ),
         ),
       },
     );

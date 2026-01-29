@@ -79,4 +79,28 @@ class GeminiService {
       return 'You completed ${completedTasks.length} tasks! Keep it up.';
     }
   }
+
+  Future<String> getButlerTip(Session session) async {
+    try {
+      final model = GenerativeModel(
+        model: _modelName,
+        apiKey: _apiKey,
+      );
+
+      final prompt = 'Give me one short, professional, and sophisticated tip for staying focused and productive today. Only 1 sentence. Speak like a professional Butler (concise, polite, high-end).';
+
+      final content = [Content.text(prompt)];
+      final response = await model.generateContent(content);
+
+      return response.text ?? 'Consistency is the hallmark of progress, sir.';
+    } catch (e, stackTrace) {
+      session.log(
+        'Gemini API Error (ButlerTip)',
+        level: LogLevel.error,
+        exception: e,
+        stackTrace: stackTrace,
+      );
+      return 'May your focus remain sharp throughout the day, sir.';
+    }
+  }
 }

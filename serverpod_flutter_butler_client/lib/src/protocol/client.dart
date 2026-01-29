@@ -294,12 +294,17 @@ class EndpointFocus extends _i2.EndpointRef {
   String get name => 'focus';
 
   /// Starts a Deep Work session for the given duration (in minutes).
-  _i3.Future<_i5.FocusSession> startSession(int durationMinutes) =>
-      caller.callServerEndpoint<_i5.FocusSession>(
-        'focus',
-        'startSession',
-        {'durationMinutes': durationMinutes},
-      );
+  _i3.Future<_i5.FocusSession> startSession(
+    int durationMinutes, {
+    int? taskId,
+  }) => caller.callServerEndpoint<_i5.FocusSession>(
+    'focus',
+    'startSession',
+    {
+      'durationMinutes': durationMinutes,
+      'taskId': taskId,
+    },
+  );
 
   /// Manually stops the current active session.
   _i3.Future<void> stopSession() => caller.callServerEndpoint<void>(
@@ -354,6 +359,12 @@ class EndpointTasks extends _i2.EndpointRef {
         'breakdownTask',
         {'description': description},
       );
+
+  _i3.Future<String> getButlerTip() => caller.callServerEndpoint<String>(
+    'tasks',
+    'getButlerTip',
+    {},
+  );
 }
 
 /// {@category Endpoint}

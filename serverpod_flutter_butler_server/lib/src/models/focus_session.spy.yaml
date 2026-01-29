@@ -5,5 +5,7 @@ fields:
   plannedEndTime: DateTime
   actualEndTime: DateTime?
   isActive: bool
+  # Link to the specific task being worked on
+  task: Task?, relation(optional)
   # Original Slack status text to restore later (mock integration)
   slackStatusOriginal: String?

@@ -606,8 +606,9 @@ class _FocusEndpoint {
 
   _i3.Future<_i5.FocusSession> startSession(
     _i1.TestSessionBuilder sessionBuilder,
-    int durationMinutes,
-  ) async {
+    int durationMinutes, {
+    int? taskId,
+  }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
@@ -621,6 +622,7 @@ class _FocusEndpoint {
           methodName: 'startSession',
           parameters: _i1.testObjectToJson({
             'durationMinutes': durationMinutes,
+            'taskId': taskId,
           }),
           serializationManager: _serializationManager,
         );
@@ -823,6 +825,34 @@ class _TasksEndpoint {
                   _localCallContext.arguments,
                 )
                 as _i3.Future<List<String>>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<String> getButlerTip(_i1.TestSessionBuilder sessionBuilder) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'tasks',
+            method: 'getButlerTip',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'tasks',
+          methodName: 'getButlerTip',
+          parameters: _i1.testObjectToJson({}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<String>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();

@@ -37,4 +37,13 @@ class TasksEndpoint extends Endpoint {
     final service = GeminiService(apiKey);
     return await service.breakDownTask(session, description);
   }
+
+  Future<String> getButlerTip(Session session) async {
+    final apiKey = session.serverpod.getPassword('geminiApiKey');
+    if (apiKey == null) {
+      throw Exception('Gemini API Key not found');
+    }
+    final service = GeminiService(apiKey);
+    return await service.getButlerTip(session);
+  }
 }

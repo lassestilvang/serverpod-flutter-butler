@@ -8,9 +8,13 @@
 // ignore_for_file: type_literal_in_constant_pattern
 // ignore_for_file: use_super_parameters
 // ignore_for_file: invalid_use_of_internal_member
+// ignore_for_file: unnecessary_null_comparison
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
+import 'task.dart' as _i2;
+import 'package:serverpod_flutter_butler_server/src/generated/protocol.dart'
+    as _i3;
 
 abstract class FocusSession
     implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
@@ -20,6 +24,8 @@ abstract class FocusSession
     required this.plannedEndTime,
     this.actualEndTime,
     required this.isActive,
+    this.taskId,
+    this.task,
     this.slackStatusOriginal,
   });
 
@@ -29,6 +35,8 @@ abstract class FocusSession
     required DateTime plannedEndTime,
     DateTime? actualEndTime,
     required bool isActive,
+    int? taskId,
+    _i2.Task? task,
     String? slackStatusOriginal,
   }) = _FocusSessionImpl;
 
@@ -47,6 +55,10 @@ abstract class FocusSession
               jsonSerialization['actualEndTime'],
             ),
       isActive: jsonSerialization['isActive'] as bool,
+      taskId: jsonSerialization['taskId'] as int?,
+      task: jsonSerialization['task'] == null
+          ? null
+          : _i3.Protocol().deserialize<_i2.Task>(jsonSerialization['task']),
       slackStatusOriginal: jsonSerialization['slackStatusOriginal'] as String?,
     );
   }
@@ -66,6 +78,10 @@ abstract class FocusSession
 
   bool isActive;
 
+  int? taskId;
+
+  _i2.Task? task;
+
   String? slackStatusOriginal;
 
   @override
@@ -80,6 +96,8 @@ abstract class FocusSession
     DateTime? plannedEndTime,
     DateTime? actualEndTime,
     bool? isActive,
+    int? taskId,
+    _i2.Task? task,
     String? slackStatusOriginal,
   });
   @override
@@ -91,6 +109,8 @@ abstract class FocusSession
       'plannedEndTime': plannedEndTime.toJson(),
       if (actualEndTime != null) 'actualEndTime': actualEndTime?.toJson(),
       'isActive': isActive,
+      if (taskId != null) 'taskId': taskId,
+      if (task != null) 'task': task?.toJson(),
       if (slackStatusOriginal != null)
         'slackStatusOriginal': slackStatusOriginal,
     };
@@ -105,13 +125,15 @@ abstract class FocusSession
       'plannedEndTime': plannedEndTime.toJson(),
       if (actualEndTime != null) 'actualEndTime': actualEndTime?.toJson(),
       'isActive': isActive,
+      if (taskId != null) 'taskId': taskId,
+      if (task != null) 'task': task?.toJsonForProtocol(),
       if (slackStatusOriginal != null)
         'slackStatusOriginal': slackStatusOriginal,
     };
   }
 
-  static FocusSessionInclude include() {
-    return FocusSessionInclude._();
+  static FocusSessionInclude include({_i2.TaskInclude? task}) {
+    return FocusSessionInclude._(task: task);
   }
 
   static FocusSessionIncludeList includeList({
@@ -149,6 +171,8 @@ class _FocusSessionImpl extends FocusSession {
     required DateTime plannedEndTime,
     DateTime? actualEndTime,
     required bool isActive,
+    int? taskId,
+    _i2.Task? task,
     String? slackStatusOriginal,
   }) : super._(
          id: id,
@@ -156,6 +180,8 @@ class _FocusSessionImpl extends FocusSession {
          plannedEndTime: plannedEndTime,
          actualEndTime: actualEndTime,
          isActive: isActive,
+         taskId: taskId,
+         task: task,
          slackStatusOriginal: slackStatusOriginal,
        );
 
@@ -169,6 +195,8 @@ class _FocusSessionImpl extends FocusSession {
     DateTime? plannedEndTime,
     Object? actualEndTime = _Undefined,
     bool? isActive,
+    Object? taskId = _Undefined,
+    Object? task = _Undefined,
     Object? slackStatusOriginal = _Undefined,
   }) {
     return FocusSession(
@@ -179,6 +207,8 @@ class _FocusSessionImpl extends FocusSession {
           ? actualEndTime
           : this.actualEndTime,
       isActive: isActive ?? this.isActive,
+      taskId: taskId is int? ? taskId : this.taskId,
+      task: task is _i2.Task? ? task : this.task?.copyWith(),
       slackStatusOriginal: slackStatusOriginal is String?
           ? slackStatusOriginal
           : this.slackStatusOriginal,
@@ -212,6 +242,11 @@ class FocusSessionUpdateTable extends _i1.UpdateTable<FocusSessionTable> {
     value,
   );
 
+  _i1.ColumnValue<int, int> taskId(int? value) => _i1.ColumnValue(
+    table.taskId,
+    value,
+  );
+
   _i1.ColumnValue<String, String> slackStatusOriginal(String? value) =>
       _i1.ColumnValue(
         table.slackStatusOriginal,
@@ -238,6 +273,10 @@ class FocusSessionTable extends _i1.Table<int?> {
       'isActive',
       this,
     );
+    taskId = _i1.ColumnInt(
+      'taskId',
+      this,
+    );
     slackStatusOriginal = _i1.ColumnString(
       'slackStatusOriginal',
       this,
@@ -254,7 +293,24 @@ class FocusSessionTable extends _i1.Table<int?> {
 
   late final _i1.ColumnBool isActive;
 
+  late final _i1.ColumnInt taskId;
+
+  _i2.TaskTable? _task;
+
   late final _i1.ColumnString slackStatusOriginal;
+
+  _i2.TaskTable get task {
+    if (_task != null) return _task!;
+    _task = _i1.createRelationTable(
+      relationFieldName: 'task',
+      field: FocusSession.t.taskId,
+      foreignField: _i2.Task.t.id,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i2.TaskTable(tableRelation: foreignTableRelation),
+    );
+    return _task!;
+  }
 
   @override
   List<_i1.Column> get columns => [
@@ -263,15 +319,28 @@ class FocusSessionTable extends _i1.Table<int?> {
     plannedEndTime,
     actualEndTime,
     isActive,
+    taskId,
     slackStatusOriginal,
   ];
+
+  @override
+  _i1.Table? getRelationTable(String relationField) {
+    if (relationField == 'task') {
+      return task;
+    }
+    return null;
+  }
 }
 
 class FocusSessionInclude extends _i1.IncludeObject {
-  FocusSessionInclude._();
+  FocusSessionInclude._({_i2.TaskInclude? task}) {
+    _task = task;
+  }
+
+  _i2.TaskInclude? _task;
 
   @override
-  Map<String, _i1.Include?> get includes => {};
+  Map<String, _i1.Include?> get includes => {'task': _task};
 
   @override
   _i1.Table<int?> get table => FocusSession.t;
@@ -299,6 +368,10 @@ class FocusSessionIncludeList extends _i1.IncludeList {
 
 class FocusSessionRepository {
   const FocusSessionRepository._();
+
+  final attachRow = const FocusSessionAttachRowRepository._();
+
+  final detachRow = const FocusSessionDetachRowRepository._();
 
   /// Returns a list of [FocusSession]s matching the given query parameters.
   ///
@@ -331,6 +404,7 @@ class FocusSessionRepository {
     bool orderDescending = false,
     _i1.OrderByListBuilder<FocusSessionTable>? orderByList,
     _i1.Transaction? transaction,
+    FocusSessionInclude? include,
   }) async {
     return session.db.find<FocusSession>(
       where: where?.call(FocusSession.t),
@@ -340,6 +414,7 @@ class FocusSessionRepository {
       limit: limit,
       offset: offset,
       transaction: transaction,
+      include: include,
     );
   }
 
@@ -368,6 +443,7 @@ class FocusSessionRepository {
     bool orderDescending = false,
     _i1.OrderByListBuilder<FocusSessionTable>? orderByList,
     _i1.Transaction? transaction,
+    FocusSessionInclude? include,
   }) async {
     return session.db.findFirstRow<FocusSession>(
       where: where?.call(FocusSession.t),
@@ -376,6 +452,7 @@ class FocusSessionRepository {
       orderDescending: orderDescending,
       offset: offset,
       transaction: transaction,
+      include: include,
     );
   }
 
@@ -384,10 +461,12 @@ class FocusSessionRepository {
     _i1.Session session,
     int id, {
     _i1.Transaction? transaction,
+    FocusSessionInclude? include,
   }) async {
     return session.db.findById<FocusSession>(
       id,
       transaction: transaction,
+      include: include,
     );
   }
 
@@ -545,6 +624,59 @@ class FocusSessionRepository {
     return session.db.count<FocusSession>(
       where: where?.call(FocusSession.t),
       limit: limit,
+      transaction: transaction,
+    );
+  }
+}
+
+class FocusSessionAttachRowRepository {
+  const FocusSessionAttachRowRepository._();
+
+  /// Creates a relation between the given [FocusSession] and [Task]
+  /// by setting the [FocusSession]'s foreign key `taskId` to refer to the [Task].
+  Future<void> task(
+    _i1.Session session,
+    FocusSession focusSession,
+    _i2.Task task, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (focusSession.id == null) {
+      throw ArgumentError.notNull('focusSession.id');
+    }
+    if (task.id == null) {
+      throw ArgumentError.notNull('task.id');
+    }
+
+    var $focusSession = focusSession.copyWith(taskId: task.id);
+    await session.db.updateRow<FocusSession>(
+      $focusSession,
+      columns: [FocusSession.t.taskId],
+      transaction: transaction,
+    );
+  }
+}
+
+class FocusSessionDetachRowRepository {
+  const FocusSessionDetachRowRepository._();
+
+  /// Detaches the relation between this [FocusSession] and the [Task] set in `task`
+  /// by setting the [FocusSession]'s foreign key `taskId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> task(
+    _i1.Session session,
+    FocusSession focusSession, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (focusSession.id == null) {
+      throw ArgumentError.notNull('focusSession.id');
+    }
+
+    var $focusSession = focusSession.copyWith(taskId: null);
+    await session.db.updateRow<FocusSession>(
+      $focusSession,
+      columns: [FocusSession.t.taskId],
       transaction: transaction,
     );
   }

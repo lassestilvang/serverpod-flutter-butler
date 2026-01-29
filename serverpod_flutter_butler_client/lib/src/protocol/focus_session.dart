@@ -11,6 +11,9 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
+import 'task.dart' as _i2;
+import 'package:serverpod_flutter_butler_client/src/protocol/protocol.dart'
+    as _i3;
 
 abstract class FocusSession implements _i1.SerializableModel {
   FocusSession._({
@@ -19,6 +22,8 @@ abstract class FocusSession implements _i1.SerializableModel {
     required this.plannedEndTime,
     this.actualEndTime,
     required this.isActive,
+    this.taskId,
+    this.task,
     this.slackStatusOriginal,
   });
 
@@ -28,6 +33,8 @@ abstract class FocusSession implements _i1.SerializableModel {
     required DateTime plannedEndTime,
     DateTime? actualEndTime,
     required bool isActive,
+    int? taskId,
+    _i2.Task? task,
     String? slackStatusOriginal,
   }) = _FocusSessionImpl;
 
@@ -46,6 +53,10 @@ abstract class FocusSession implements _i1.SerializableModel {
               jsonSerialization['actualEndTime'],
             ),
       isActive: jsonSerialization['isActive'] as bool,
+      taskId: jsonSerialization['taskId'] as int?,
+      task: jsonSerialization['task'] == null
+          ? null
+          : _i3.Protocol().deserialize<_i2.Task>(jsonSerialization['task']),
       slackStatusOriginal: jsonSerialization['slackStatusOriginal'] as String?,
     );
   }
@@ -63,6 +74,10 @@ abstract class FocusSession implements _i1.SerializableModel {
 
   bool isActive;
 
+  int? taskId;
+
+  _i2.Task? task;
+
   String? slackStatusOriginal;
 
   /// Returns a shallow copy of this [FocusSession]
@@ -74,6 +89,8 @@ abstract class FocusSession implements _i1.SerializableModel {
     DateTime? plannedEndTime,
     DateTime? actualEndTime,
     bool? isActive,
+    int? taskId,
+    _i2.Task? task,
     String? slackStatusOriginal,
   });
   @override
@@ -85,6 +102,8 @@ abstract class FocusSession implements _i1.SerializableModel {
       'plannedEndTime': plannedEndTime.toJson(),
       if (actualEndTime != null) 'actualEndTime': actualEndTime?.toJson(),
       'isActive': isActive,
+      if (taskId != null) 'taskId': taskId,
+      if (task != null) 'task': task?.toJson(),
       if (slackStatusOriginal != null)
         'slackStatusOriginal': slackStatusOriginal,
     };
@@ -105,6 +124,8 @@ class _FocusSessionImpl extends FocusSession {
     required DateTime plannedEndTime,
     DateTime? actualEndTime,
     required bool isActive,
+    int? taskId,
+    _i2.Task? task,
     String? slackStatusOriginal,
   }) : super._(
          id: id,
@@ -112,6 +133,8 @@ class _FocusSessionImpl extends FocusSession {
          plannedEndTime: plannedEndTime,
          actualEndTime: actualEndTime,
          isActive: isActive,
+         taskId: taskId,
+         task: task,
          slackStatusOriginal: slackStatusOriginal,
        );
 
@@ -125,6 +148,8 @@ class _FocusSessionImpl extends FocusSession {
     DateTime? plannedEndTime,
     Object? actualEndTime = _Undefined,
     bool? isActive,
+    Object? taskId = _Undefined,
+    Object? task = _Undefined,
     Object? slackStatusOriginal = _Undefined,
   }) {
     return FocusSession(
@@ -135,6 +160,8 @@ class _FocusSessionImpl extends FocusSession {
           ? actualEndTime
           : this.actualEndTime,
       isActive: isActive ?? this.isActive,
+      taskId: taskId is int? ? taskId : this.taskId,
+      task: task is _i2.Task? ? task : this.task?.copyWith(),
       slackStatusOriginal: slackStatusOriginal is String?
           ? slackStatusOriginal
           : this.slackStatusOriginal,

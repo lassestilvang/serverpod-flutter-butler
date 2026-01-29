@@ -3,24 +3,35 @@ import '../generated/protocol.dart';
 
 class FocusEndpoint extends Endpoint {
   /// Starts a Deep Work session for the given duration (in minutes).
-  Future<FocusSession> startSession(Session session, int durationMinutes) async {
+  Future<FocusSession> startSession(Session session, int durationMinutes, {int? taskId}) async {
     final startTime = DateTime.now();
     final plannedEndTime = startTime.add(Duration(minutes: durationMinutes));
 
-    // 1. Create the session in DB
+    String statusText = 'Deep Working until ${plannedEndTime.toIso8601String()}';
+    
+    // 1. Fetch task details if provided
+    if (taskId != null) {
+      final task = await Task.db.findById(session, taskId);
+      if (task != null) {
+        statusText = 'Focusing on: "${task.title}" 🧠';
+      }
+    }
+
+    // 2. Create the session in DB
     final focusSession = FocusSession(
       startTime: startTime,
       plannedEndTime: plannedEndTime,
-      isActive: true, // Assuming default is false or we set it here
-      slackStatusOriginal: 'Available', // Mock original status capture
+      isActive: true, 
+      taskId: taskId,
+      slackStatusOriginal: 'Available', 
     );
 
     final insertedSession = await FocusSession.db.insertRow(session, focusSession);
 
-    // 2. Mock: Update Slack Status
-    session.log('[Mock] Setting Slack Status to: "Deep Work until ${plannedEndTime.toIso8601String()}"');
+    // 3. Mock: Update Slack Status
+    session.log('[Mock] Setting Slack Status to: "$statusText"');
 
-    // 3. Schedule the Future Call to end the session
+    // 4. Schedule the Future Call to end the session
     await session.serverpod.futureCallWithDelay(
       'endSessionCall',
       insertedSession,
