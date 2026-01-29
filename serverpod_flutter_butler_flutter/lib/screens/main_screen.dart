@@ -35,7 +35,7 @@ class _MainScreenState extends State<MainScreen> {
         children: [
           DashboardScreen(onStartFocus: _navigateToDeepWork),
           DeepWorkScreen(initialTaskId: _deepWorkTaskId),
-          const InsightScreen(),
+          InsightScreen(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
