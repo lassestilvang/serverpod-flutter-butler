@@ -54,6 +54,7 @@ class _GreetingsScreenState extends State<GreetingsScreen> {
           TextField(
             controller: _textEditingController,
             decoration: const InputDecoration(hintText: 'Enter your name'),
+            onSubmitted: (_) => _callHello(),
           ),
           const SizedBox(height: 16),
           ElevatedButton(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:serverpod_flutter_butler_client/serverpod_flutter_butler_client.dart';
-import '../../main.dart'; // Access to global client
+import '../main.dart'; // Access to global client
+import '../widgets/butler_app_bar.dart';
 
 class DeepWorkScreen extends StatefulWidget {
   final int? initialTaskId;
@@ -121,11 +122,8 @@ class _DeepWorkScreenState extends State<DeepWorkScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        foregroundColor: Colors.white70,
-        title: Text(_isSessionActive ? '' : 'FOCUS ORCHESTRATOR', style: const TextStyle(fontSize: 14, letterSpacing: 2, fontWeight: FontWeight.bold)),
+      appBar: ButlerAppBar(
+        title: _isSessionActive ? '' : 'Focus Orchestrator',
       ),
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 40),
@@ -208,7 +206,7 @@ class _DeepWorkScreenState extends State<DeepWorkScreen> {
             if (!_isSessionActive) ...[
               if (_isLoadingTasks)
                 const CircularProgressIndicator(color: Colors.blueAccent)
-              else if (_availableTasks.isEmpty)
+              else if ((_availableTasks ?? []).isEmpty)
                 const Text('No active tasks to focus on.', style: TextStyle(color: Colors.white38))
               else ...[
                 // Custom Task Selector (Glassmorphism)
@@ -221,13 +219,17 @@ class _DeepWorkScreenState extends State<DeepWorkScreen> {
                   ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<int>(
-                      value: _availableTasks.any((t) => t.id == _selectedTaskId) ? _selectedTaskId : null,
+                      value: (_availableTasks ?? []).any((t) => t.id == _selectedTaskId) ? _selectedTaskId : null,
                       dropdownColor: const Color(0xFF0F172A),
                       icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white38),
                       style: const TextStyle(color: Colors.white, fontSize: 16),
                       hint: const Text('Select a focus area', style: TextStyle(color: Colors.white38)),
-                      items: _availableTasks.map((t) {
-                        return DropdownMenuItem(value: t.id, child: Text(t.title));
+                      items: (_availableTasks ?? []).map((t) {
+                        final isSubtask = t.parentTaskId != null;
+                        return DropdownMenuItem(
+                          value: t.id, 
+                          child: Text(isSubtask ? '  ↳ ${t.title}' : t.title),
+                        );
                       }).toList(),
                       onChanged: (val) => setState(() => _selectedTaskId = val),
                     ),
@@ -238,14 +240,14 @@ class _DeepWorkScreenState extends State<DeepWorkScreen> {
                 if (_selectedTaskId != null) ...[
                    Builder(
                      builder: (context) {
-                       final selectedTask = _availableTasks.firstWhere((t) => t.id == _selectedTaskId);
+                       final selectedTask = (_availableTasks ?? []).firstWhere((t) => t.id == _selectedTaskId);
                        final parentId = selectedTask.parentTaskId;
                        final parentTask = parentId != null 
-                           ? _availableTasks.firstWhere((t) => t.id == parentId, orElse: () => Task(title: 'Unknown Parent', isCompleted: false, parentTaskId: 0, createdAt: DateTime.now())) 
+                           ? (_availableTasks ?? []).firstWhere((t) => t.id == parentId, orElse: () => Task(title: 'Unknown Parent', isCompleted: false, parentTaskId: 0, createdAt: DateTime.now())) 
                            : null;
                        
                        // Find subtasks if this is a parent
-                       final subtasks = _availableTasks.where((t) => t.parentTaskId == selectedTask.id).toList();
+                       final subtasks = (_availableTasks ?? []).where((t) => t.parentTaskId == selectedTask.id).toList();
 
                        return Column(
                          children: [

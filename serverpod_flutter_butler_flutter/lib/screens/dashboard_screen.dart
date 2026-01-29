@@ -3,6 +3,7 @@ import 'package:serverpod_flutter_butler_client/serverpod_flutter_butler_client.
 import 'package:confetti/confetti.dart';
 import '../main.dart';
 import '../widgets/task_entry_widget.dart';
+import '../widgets/butler_app_bar.dart';
 
 class DashboardScreen extends StatefulWidget {
   final Function(int)? onStartFocus;
@@ -13,38 +14,56 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  int _refreshKey = 0;
   late ConfettiController _confettiController;
   String? _butlerTip;
-  bool _isLoadingTip = true;
+  List<Task> _allTasks = [];
+  bool _isLoading = true;
 
   @override
   void didUpdateWidget(DashboardScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _refreshDashboard();
+    _silentRefresh();
   }
 
   @override
   void initState() {
     super.initState();
     _confettiController = ConfettiController(duration: const Duration(seconds: 2));
-    _loadButlerTip();
+    _loadAllData();
   }
 
-  Future<void> _loadButlerTip() async {
+  Future<void> _loadAllData() async {
+    setState(() => _isLoading = true);
     try {
+      final tasks = await client.tasks.getAllTasks();
       final tip = await client.tasks.getButlerTip();
       if (mounted) {
         setState(() {
+          _allTasks = tasks;
           _butlerTip = tip;
-          _isLoadingTip = false;
+          _isLoading = false;
         });
       }
     } catch (e) {
-      if (mounted) {
-        setState(() => _isLoadingTip = false);
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  Future<void> _silentRefresh() async {
+     try {
+      final tasks = await client.tasks.getAllTasks();
+      final tip = await client.tasks.getButlerTip();
+      if (mounted) {
+        setState(() {
+          _allTasks = tasks;
+          _butlerTip = tip;
+        });
+      }
+    } catch (e) { /* ignore */ }
+  }
+
+  void _refreshDashboard() {
+    _loadAllData();
   }
 
   String _getGreeting() {
@@ -53,20 +72,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (hour < 17) return 'Good afternoon, sir.';
     return 'Good evening, sir.';
   }
-  
-  void _refreshDashboard() {
-    _loadButlerTip();
-    setState(() {
-      _refreshKey++;
-    });
-  }
 
   Future<void> _markCompleted(Task task) async {
     try {
       task.isCompleted = true;
       await client.tasks.updateTask(task);
       _confettiController.play();
-      _refreshDashboard();
+      _silentRefresh();
     } catch(e) {
       if(mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Err: $e')));
     }
@@ -74,11 +86,83 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Future<void> _deleteTask(Task task) async {
      try {
+      if (mounted) {
+        setState(() {
+          _allTasks.removeWhere((t) => t.id == task.id || t.parentTaskId == task.id);
+        });
+      }
       await client.tasks.deleteTask(task);
-      _refreshDashboard();
+      _silentRefresh(); // Final sync
     } catch(e) {
       if(mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Err: $e')));
+      _silentRefresh(); // Revert on error
     }
+  }
+
+  Future<void> _addSubtask(Task parent) async {
+    final titleController = TextEditingController();
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1E293B),
+        title: Text('Add Subtask to "${parent.title}"', style: const TextStyle(color: Colors.white, fontSize: 16)),
+        content: TextField(
+          controller: titleController,
+          autofocus: true,
+          style: const TextStyle(color: Colors.white),
+          decoration: const InputDecoration(
+            hintText: 'Subtask Title',
+            hintStyle: TextStyle(color: Colors.white54),
+            enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white30)),
+          ),
+          onSubmitted: (val) async {
+            if (val.isNotEmpty) {
+                final subtask = Task(
+                  title: val,
+                  isCompleted: false,
+                  parentTaskId: parent.id,
+                  createdAt: DateTime.now(),
+                );
+                final sub = await client.tasks.addTask(subtask);
+                if (mounted) {
+                  setState(() {
+                    _allTasks.add(sub);
+                  });
+                }
+                Navigator.of(context).pop();
+                _silentRefresh();
+            }
+          },
+        ),
+        actions: [
+          TextButton(
+            child: const Text('Cancel'),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          TextButton(
+            child: const Text('Add', style: TextStyle(color: Colors.blueAccent)),
+            onPressed: () async {
+              if (titleController.text.isNotEmpty) {
+                final subtask = Task(
+                  title: titleController.text,
+                  isCompleted: false,
+                  parentTaskId: parent.id,
+                  createdAt: DateTime.now(),
+                );
+                final sub = await client.tasks.addTask(subtask);
+                if (mounted) {
+                  setState(() {
+                    _allTasks.add(sub);
+                  });
+                }
+                Navigator.of(context).pop();
+                _silentRefresh();
+              }
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _editTask(Task task) async {
@@ -96,6 +180,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
             hintStyle: TextStyle(color: Colors.white54),
             enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white30)),
           ),
+          onSubmitted: (val) async {
+            task.title = val;
+            await client.tasks.updateTask(task);
+            if (mounted) {
+              Navigator.of(context).pop();
+              _refreshDashboard();
+            }
+          },
         ),
         actions: [
           TextButton(
@@ -126,10 +218,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        title: Text('AI Butler', style: Theme.of(context).textTheme.titleLarge?.copyWith(letterSpacing: 1.2)),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
+      appBar: ButlerAppBar(
+        title: 'AI Butler',
         actions: [
           IconButton(
             onPressed: _refreshDashboard,
@@ -156,7 +246,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                    const SizedBox(height: 20),
                    Expanded(child: TaskEntryWidget(onTaskSaved: () {
                      Navigator.of(context).pop();
-                     _refreshDashboard();
+                     _silentRefresh();
                    })),
                 ],
               ),
@@ -187,27 +277,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
             shouldLoop: false,
             colors: const [Colors.blue, Colors.indigo, Colors.cyan],
           ),
-          FutureBuilder<List<Task>>(
-            key: ValueKey(_refreshKey),
-            future: client.tasks.getAllTasks(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
+          Builder(
+            builder: (context) {
+              if (_isLoading) {
                 return const Center(child: CircularProgressIndicator());
               }
-              if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              }
 
-              final allTasks = snapshot.data ?? [];
-              final activeTasks = allTasks.where((t) => !t.isCompleted).toList();
+              final tasks = _allTasks ?? [];
+              final activeTasks = tasks.where((t) => !t.isCompleted).toList();
 
               // Grouping Logic
               final mainTasks = activeTasks.where((t) => t.parentTaskId == null).toList();
-              final subTasks = activeTasks.where((t) => t.parentTaskId != null).toList();
+              final subTasksList = activeTasks.where((t) => t.parentTaskId != null).toList();
               
               // Handle orphans (active subtasks whose parents are completed or missing)
               final mainTaskIds = mainTasks.map((e) => e.id).toSet();
-              final orphans = subTasks.where((t) => !mainTaskIds.contains(t.parentTaskId)).toList();
+              final orphans = subTasksList.where((t) => !mainTaskIds.contains(t.parentTaskId)).toList();
               
               // Create a display list of "Roots" (True Roots + Orphans treated as Roots)
               final displayRoots = [...mainTasks, ...orphans];
@@ -292,13 +377,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ),
                         ),
                         const SizedBox(height: 24),
-                        if (_isLoadingTip)
-                          const LinearProgressIndicator()
-                        else
-                          Text(
-                            _butlerTip ?? 'Consistency is the hallmark of excellence, sir.',
-                            style: const TextStyle(color: Colors.white70, fontSize: 18, height: 1.6, fontStyle: FontStyle.italic),
-                          ),
+                        Text(
+                          _butlerTip ?? 'Consistency is the hallmark of excellence, sir.',
+                          style: const TextStyle(color: Colors.white70, fontSize: 18, height: 1.6, fontStyle: FontStyle.italic),
+                        ),
                       ],
                     ),
                   ),
@@ -310,7 +392,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   const SizedBox(height: 24),
                   // Render Task Hierarchy
                   for (final task in displayRoots) ...[
-                    _buildTaskCard(task, subTasks.where((s) => s.parentTaskId == task.id).toList()),
+                    _buildTaskCard(task, subTasksList.where((s) => s.parentTaskId == task.id).toList()),
                   ]
                 ],
               );
@@ -374,9 +456,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 PopupMenuButton(
                   icon: const Icon(Icons.more_horiz, color: Colors.white38),
                   itemBuilder: (context) => [
+                    const PopupMenuItem(value: 'add_sub', child: Text('Add Subtask')),
                     const PopupMenuItem(value: 'delete', child: Text('Delete Task')),
                   ],
                   onSelected: (val) {
+                    if (val == 'add_sub') _addSubtask(task);
                     if (val == 'delete') _deleteTask(task);
                   },
                 ),
@@ -412,13 +496,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     sub.title,
                     style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 14),
                   ),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.play_arrow_rounded, color: Colors.white24, size: 20),
-                    onPressed: () {
-                      if (widget.onStartFocus != null && sub.id != null) {
-                        widget.onStartFocus!(sub.id!);
-                      }
-                    },
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.delete_outline, color: Colors.white24, size: 18),
+                        onPressed: () => _deleteTask(sub),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.play_arrow_rounded, color: Colors.white24, size: 20),
+                        onPressed: () {
+                          if (widget.onStartFocus != null && sub.id != null) {
+                            widget.onStartFocus!(sub.id!);
+                          }
+                        },
+                      ),
+                    ],
                   ),
                 )).toList(),
               ),

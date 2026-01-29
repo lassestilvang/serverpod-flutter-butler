@@ -146,6 +146,7 @@ class _TimeBoxScreenState extends State<TimeBoxScreen> {
                 hintText: 'e.g., Refactor Auth Flow',
                 border: OutlineInputBorder(),
               ),
+              onSubmitted: (_) => _breakdownTask(),
             ),
             const SizedBox(height: 10),
             Row(

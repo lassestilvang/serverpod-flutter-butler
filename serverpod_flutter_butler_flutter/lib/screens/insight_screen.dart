@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:serverpod_flutter_butler_client/serverpod_flutter_butler_client.dart';
-import '../../main.dart'; // Access to global client
+import '../main.dart'; // Access to global client
+import '../widgets/butler_app_bar.dart';
 
 class InsightScreen extends StatefulWidget {
   const InsightScreen({super.key});
@@ -77,7 +78,8 @@ class _InsightScreenState extends State<InsightScreen> {
   @override
   Widget build(BuildContext context) {
     // Logic for Hierarchy Tree (Completed Only + Completed Subtasks)
-    final completedTasks = _allTasks.where((t) => t.isCompleted).toList();
+    final tasks = _allTasks ?? [];
+    final completedTasks = tasks.where((t) => t.isCompleted).toList();
     // We want to group by "Roots". A completed task is a root if:
     // 1. It has no parent.
     // 2. OR its parent is NOT completed (orphaned completion).
@@ -97,10 +99,8 @@ class _InsightScreenState extends State<InsightScreen> {
 
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        title: Text('DAILY INSIGHTS', style: Theme.of(context).textTheme.titleLarge?.copyWith(letterSpacing: 2, fontSize: 16)),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
+      appBar: const ButlerAppBar(
+        title: 'Daily Insights',
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator(color: Colors.blueAccent))

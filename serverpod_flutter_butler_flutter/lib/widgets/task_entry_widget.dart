@@ -61,16 +61,15 @@ class _TaskEntryWidgetState extends State<TaskEntryWidget> {
       );
       final savedMainTask = await client.tasks.addTask(mainTask);
 
-      // 2. Save Subtasks
-      for (final subtaskTitle in _subtasks) {
-        final subtask = Task(
+      // 2. Save Subtasks in parallel
+      await Future.wait(_subtasks.map((subtaskTitle) {
+        return client.tasks.addTask(Task(
           title: subtaskTitle,
           isCompleted: false,
           parentTaskId: savedMainTask.id,
           createdAt: DateTime.now(),
-        );
-        await client.tasks.addTask(subtask);
-      }
+        ));
+      }));
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Plan Saved Successfully! 💾')));
@@ -108,6 +107,13 @@ class _TaskEntryWidgetState extends State<TaskEntryWidget> {
                 hintText: 'e.g., Refactor Auth Flow',
                 border: OutlineInputBorder(),
               ),
+              onSubmitted: (_) {
+                if (_subtasks.isEmpty) {
+                  _breakdownTask();
+                } else {
+                  _createTask();
+                }
+              },
             ),
             const SizedBox(height: 10),
             Row(
