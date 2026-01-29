@@ -111,10 +111,15 @@ class _TaskEntryWidgetState extends State<TaskEntryWidget> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                FilledButton.icon(
-                  onPressed: _isLoading ? null : _breakdownTask,
-                  icon: const Icon(Icons.auto_awesome),
-                  label: const Text('Magic Breakdown'),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: FilledButton.icon(
+                      onPressed: _isLoading ? null : _breakdownTask,
+                      icon: const Icon(Icons.auto_awesome),
+                      label: const Text('Magic Breakdown'),
+                    ),
+                  ),
                 ),
               ],
             ),

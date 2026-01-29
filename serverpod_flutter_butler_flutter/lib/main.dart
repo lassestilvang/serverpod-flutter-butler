@@ -46,8 +46,24 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'AI Butler',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        brightness: Brightness.dark,
+        primaryColor: const Color(0xFF0A1128),
+        scaffoldBackgroundColor: const Color(0xFF030712),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF3B82F6),
+          brightness: Brightness.dark,
+          surface: const Color(0xFF111827),
+          primary: const Color(0xFF3B82F6),
+        ),
+        textTheme: const TextTheme(
+          displayLarge: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          headlineSmall: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          titleLarge: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          bodyLarge: TextStyle(color: Colors.white70),
+          bodyMedium: TextStyle(color: Colors.white60),
+        ),
         useMaterial3: true,
       ),
       home: const MainScreen(),

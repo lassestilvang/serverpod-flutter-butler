@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:serverpod_flutter_butler_client/serverpod_flutter_butler_client.dart';
 import '../../main.dart'; // Access to global client
 
 class InsightScreen extends StatefulWidget {
@@ -10,7 +11,8 @@ class InsightScreen extends StatefulWidget {
 
 class _InsightScreenState extends State<InsightScreen> {
   Map<String, int>? _stats;
-  String? _dailySummary; // Add state for summary
+  String? _dailySummary; 
+  List<Task> _completedTasks = []; // Added for list
   bool _isLoading = true;
   String? _error;
 
@@ -23,14 +25,15 @@ class _InsightScreenState extends State<InsightScreen> {
   Future<void> _loadStats() async {
     try {
       final stats = await client.analytics.getDailyStats();
-      // Fetch summary in parallel or sequence? Sequence for simplicity, or future.wait
-      // Let's do sequence to ensure stats load first
       final summary = await client.analytics.getDailySummary();
+      // Fetch completion list (re-using all tasks for now, filtering locally)
+      final allTasks = await client.tasks.getAllTasks();
       
       if (mounted) {
         setState(() {
           _stats = stats;
           _dailySummary = summary;
+          _completedTasks = allTasks.where((t) => t.isCompleted).toList();
           _isLoading = false;
         });
       }
@@ -47,102 +50,157 @@ class _InsightScreenState extends State<InsightScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('Daily Insights 📉'),
+        title: Text('DAILY INSIGHTS', style: Theme.of(context).textTheme.titleLarge?.copyWith(letterSpacing: 2, fontSize: 16)),
         elevation: 0,
         backgroundColor: Colors.transparent,
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.blue.shade900, Colors.blue.shade700],
-            ),
-          ),
-        ),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator(color: Colors.blueAccent))
           : _error != null
               ? Center(child: Text('Error: $_error'))
               : Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade50,
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    gradient: RadialGradient(
+                      center: Alignment(0.8, -0.6),
+                      radius: 1.5,
+                      colors: [
+                        Color(0xFF0F172A),
+                        Color(0xFF020617),
+                      ],
+                    ),
                   ),
                   child: ListView(
-                    padding: const EdgeInsets.all(24.0),
+                    padding: const EdgeInsets.fromLTRB(32, 120, 32, 32),
                     children: [
                       Text(
-                        'Your Performance',
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                        'PERFORMANCE SUMMARY',
+                        style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 3),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 24),
                       Row(
                         children: [
                           Expanded(
-                            child: _buildStatCard(
-                              'Completed',
+                            child: _buildExecutiveStatCard(
+                              'COMPLETED',
                               _stats?['completedTasks']?.toString() ?? '0',
-                              Icons.check_circle,
-                              Colors.green,
+                              '80% ON TRACK',
+                              [Colors.blueAccent, Colors.purpleAccent],
                             ),
                           ),
                           const SizedBox(width: 16),
                           Expanded(
-                            child: _buildStatCard(
-                              'Focus Time',
+                            child: _buildExecutiveStatCard(
+                              'FOCUS TIME',
                               '${_stats?['totalFocusMinutes'] ?? 0}m',
-                              Icons.bolt,
-                              Colors.orange,
+                              'TOP TIER',
+                              [Colors.orangeAccent, Colors.redAccent],
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 32),
+                      const SizedBox(height: 48),
+                      // COMPLETED TASKS LIST SECTION
+                      Text(
+                        'ACCOMPLISHMENTS',
+                        style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 3),
+                      ),
+                      const SizedBox(height: 16),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.03),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: Colors.white.withOpacity(0.05)),
+                        ),
+                        child: Column(
+                          children: [
+                            if (_completedTasks.isEmpty)
+                              const Padding(
+                                padding: EdgeInsets.all(24.0),
+                                child: Text('No tasks completed yet. Begin your work.', style: TextStyle(color: Colors.white38)),
+                              )
+                            else
+                              for (int i = 0; i < _completedTasks.length; i++)
+                                Container(
+                                  decoration: i < _completedTasks.length - 1 
+                                    ? BoxDecoration(border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.05)))) 
+                                    : null,
+                                  child: ListTile(
+                                    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                                    leading: const Icon(Icons.check_circle, color: Colors.greenAccent, size: 20),
+                                    title: Text(
+                                      _completedTasks[i].title, 
+                                      style: TextStyle(color: Colors.white.withOpacity(0.8), decoration: TextDecoration.lineThrough, decorationColor: Colors.white24)
+                                    ),
+                                  ),
+                                ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 48),
                       if (_dailySummary != null) ...[
                         Text(
-                          'Butler\'s Summary',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                          'AI PERFORMANCE REVIEW',
+                          style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 3),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 24),
                         Container(
-                          padding: const EdgeInsets.all(24),
+                          padding: const EdgeInsets.all(32),
                           decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(24),
-                            boxShadow: [
-                              BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20, offset: const Offset(0, 10))
-                            ],
-                            border: Border.all(color: Colors.amber.withOpacity(0.3), width: 2),
+                            borderRadius: BorderRadius.circular(32),
+                            border: Border.all(color: Colors.white.withOpacity(0.1)),
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Colors.white.withOpacity(0.06),
+                                Colors.white.withOpacity(0.01),
+                              ],
+                            ),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Row(
+                              Row(
                                 children: [
-                                  Icon(Icons.auto_awesome, color: Colors.amber, size: 28),
-                                  SizedBox(width: 12),
-                                  Text('AI Performance Review', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                  Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: Colors.amber.withOpacity(0.1),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(Icons.star, color: Colors.amber, size: 24),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  const Text('EXECUTIVE SUMMARY', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
                                 ],
                               ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: 24),
                               Text(
                                 _dailySummary!,
-                                style: const TextStyle(fontSize: 17, height: 1.5, color: Colors.black87),
+                                style: TextStyle(fontSize: 17, height: 1.6, color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.w300),
                               ),
+                              const SizedBox(height: 24),
+                              const Divider(color: Colors.white10),
+                              const SizedBox(height: 16),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  _buildSmallMetric('FOCUS', '+15%'),
+                                  _buildSmallMetric('SCORE', '9.8/10'),
+                                ],
+                              )
                             ],
                           ),
                         ),
                       ],
-                      const SizedBox(height: 48),
+                      const SizedBox(height: 60),
                       Center(
-                        child: Column(
-                          children: [
-                            Icon(Icons.rocket_launch, size: 48, color: Colors.blue.withOpacity(0.2)),
-                            const SizedBox(height: 12),
-                            const Text(
-                              'Keep up the momentum, sir.',
-                              style: TextStyle(fontSize: 18, color: Colors.grey, fontStyle: FontStyle.italic),
-                            ),
-                          ],
+                        child: Text(
+                          'MAINTAIN THE MOMENTUM, SIR.',
+                          style: TextStyle(color: Colors.white.withOpacity(0.2), fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 4),
                         ),
                       ),
                     ],
@@ -151,26 +209,60 @@ class _InsightScreenState extends State<InsightScreen> {
     );
   }
 
-  Widget _buildStatCard(String title, String value, IconData icon, Color color) {
+  Widget _buildExecutiveStatCard(String title, String value, String subtext, List<Color> glowColors) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10, offset: const Offset(0, 5))
-        ]
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.white.withOpacity(0.08)),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.white.withOpacity(0.05),
+            Colors.white.withOpacity(0.02),
+          ],
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: color, size: 32),
+          Text(title, style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1)),
           const SizedBox(height: 16),
-          Text(title, style: const TextStyle(color: Colors.grey, fontSize: 14)),
-          const SizedBox(height: 4),
-          Text(value, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(value, style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w200, color: Colors.white)),
+            ],
+          ),
+          const SizedBox(height: 16),
+          // Mini Glow Chart Mock
+          Container(
+            height: 4,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(2),
+              gradient: LinearGradient(colors: glowColors),
+              boxShadow: [
+                BoxShadow(color: glowColors[0].withOpacity(0.5), blurRadius: 8, spreadRadius: 1)
+              ]
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(subtext, style: TextStyle(color: glowColors[0].withOpacity(0.8), fontSize: 10, fontWeight: FontWeight.bold)),
         ],
       ),
+    );
+  }
+
+  Widget _buildSmallMetric(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 10, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 4),
+        Text(value, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+      ],
     );
   }
 }

@@ -3,7 +3,8 @@ import 'package:serverpod_flutter_butler_client/serverpod_flutter_butler_client.
 import '../../main.dart'; // Access to global client
 
 class DeepWorkScreen extends StatefulWidget {
-  const DeepWorkScreen({super.key});
+  final int? initialTaskId;
+  const DeepWorkScreen({super.key, this.initialTaskId});
 
   @override
   State<DeepWorkScreen> createState() => _DeepWorkScreenState();
@@ -15,11 +16,28 @@ class _DeepWorkScreenState extends State<DeepWorkScreen> {
   List<Task> _availableTasks = [];
   int? _selectedTaskId;
   bool _isLoadingTasks = true;
+  double _sessionDurationMinutes = 45;
+  int? _secondsRemaining;
 
   @override
   void initState() {
     super.initState();
     _loadTasks();
+    if (widget.initialTaskId != null) {
+      _selectedTaskId = widget.initialTaskId;
+    }
+  }
+
+  @override
+  void didUpdateWidget(DeepWorkScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialTaskId != null && widget.initialTaskId != oldWidget.initialTaskId) {
+      setState(() {
+        _selectedTaskId = widget.initialTaskId;
+      });
+       // Optional: Auto-start if requested, but user preferred flow might be strict selection first.
+       // We'll leave it as pre-selection for now.
+    }
   }
 
   Future<void> _loadTasks() async {
@@ -44,13 +62,20 @@ class _DeepWorkScreenState extends State<DeepWorkScreen> {
     });
 
     try {
-      // Start a 1 minute session for demo purposes
-      await client.focus.startSession(1, taskId: _selectedTaskId);
+      final durationSeconds = (_sessionDurationMinutes * 60).toInt();
+      // Start session on server (mocked duration for now on server-side if needed, or pass it)
+      // Assuming server API takes minutes or we stick to local + server sync start
+      await client.focus.startSession(durationSeconds ~/ 60, taskId: _selectedTaskId); // API uses minutes
+      
       setState(() {
         _isSessionActive = true;
+        _secondsRemaining = durationSeconds;
         final taskTitle = _availableTasks.firstWhere((t) => t.id == _selectedTaskId, orElse: () => Task(title: 'Deep Work', isCompleted: false, parentTaskId: 0)).title;
         _statusMessage = 'Currently Focusing on:\n"$taskTitle"';
       });
+
+      _runLocalTimer();
+
     } catch (e) {
       setState(() {
         _statusMessage = 'Error: $e';
@@ -58,91 +83,205 @@ class _DeepWorkScreenState extends State<DeepWorkScreen> {
     }
   }
 
-  Future<void> _stopSession() async {
+  void _runLocalTimer() async {
+    final stream = client.timer.startTimer(_secondsRemaining!);
+    await for (final update in stream) {
+      if (!mounted || !_isSessionActive) break;
+      setState(() {
+        _secondsRemaining = update;
+      });
+      if (update == 0) {
+        _stopSession(completed: true);
+        break;
+      }
+    }
+  }
+
+  Future<void> _stopSession({bool completed = false}) async {
     try {
       await client.focus.stopSession();
+    } catch(e) { /* ignore */ }
+    
+    if (mounted) {
       setState(() {
         _isSessionActive = false;
-        _statusMessage = 'Session Ended Early.';
+        _statusMessage = completed ? 'Session Completed. Well done.' : 'Session Ended Early.';
+        _secondsRemaining = null;
       });
-      _loadTasks(); // Refresh list
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+      _loadTasks(); 
     }
+  }
+
+  String _formatTime(int seconds) {
+    final minutes = seconds ~/ 60;
+    final remainingSeconds = seconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('Focus Butler'),
-        backgroundColor: _isSessionActive ? Colors.deepPurple.shade900 : null,
-        foregroundColor: _isSessionActive ? Colors.white : null,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        foregroundColor: Colors.white70,
+        title: Text(_isSessionActive ? '' : 'FOCUS ORCHESTRATOR', style: const TextStyle(fontSize: 14, letterSpacing: 2, fontWeight: FontWeight.bold)),
       ),
       body: Container(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.symmetric(horizontal: 40),
         width: double.infinity,
-        decoration: _isSessionActive ? BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.deepPurple.shade900, Colors.black],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter
-          )
-        ) : null,
+        decoration: BoxDecoration(
+          gradient: RadialGradient(
+            center: const Alignment(0, -0.3),
+            radius: 1.2,
+            colors: _isSessionActive 
+              ? [const Color(0xFF2E1065), const Color(0xFF020617)]
+              : [const Color(0xFF0F172A), const Color(0xFF020617)],
+          ),
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              _isSessionActive ? Icons.nightlight_round : Icons.sunny,
-              size: 120,
-              color: _isSessionActive ? Colors.amber.shade200 : Colors.orange,
+            // Glowing Timer Circle / Aura
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                if (_isSessionActive)
+                  TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 0.0, end: 1.0),
+                    duration: const Duration(seconds: 2),
+                    builder: (context, value, child) {
+                      return Container(
+                        width: 280,
+                        height: 280,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.purpleAccent.withOpacity(0.1 * value),
+                              blurRadius: 60 * value,
+                              spreadRadius: 20 * value,
+                            )
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                Container(
+                  width: 240,
+                  height: 240,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white10, width: 1),
+                    color: Colors.white.withOpacity(0.02),
+                  ),
+                  child: Center(
+                    child: _isSessionActive 
+                      ? Text(_formatTime(_secondsRemaining ?? 0), style: const TextStyle(fontSize: 64, fontWeight: FontWeight.w200, color: Colors.white, letterSpacing: -2))
+                      : Icon(Icons.blur_on, size: 80, color: Colors.blueAccent.withOpacity(0.5)),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 60),
             Text(
-              _statusMessage ?? 'Ready to enter Deep Work?',
+              _isSessionActive ? 'CONCENTRATION IN PROGRESS' : 'READY TO ASCEND?',
+              style: TextStyle(
+                color: _isSessionActive ? Colors.purpleAccent.withOpacity(0.8) : Colors.white38,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 4,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              _statusMessage ?? 'Enter a state of deep focus.',
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                color: _isSessionActive ? Colors.white : null,
-                fontWeight: FontWeight.bold
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.w300,
+                height: 1.4,
               ),
             ),
             const SizedBox(height: 40),
             if (!_isSessionActive) ...[
               if (_isLoadingTasks)
-                const CircularProgressIndicator()
+                const CircularProgressIndicator(color: Colors.blueAccent)
               else if (_availableTasks.isEmpty)
-                const Text('No active tasks to focus on.\nCreate a plan first!', textAlign: TextAlign.center)
+                const Text('No active tasks to focus on.', style: TextStyle(color: Colors.white38))
               else ...[
-                const Text('Choose your main focus:'),
-                const SizedBox(height: 10),
-                DropdownButton<int>(
-                  value: _selectedTaskId,
-                  hint: const Text('Select a task'),
-                  items: _availableTasks.map((t) {
-                    return DropdownMenuItem(value: t.id, child: Text(t.title));
-                  }).toList(),
-                  onChanged: (val) => setState(() => _selectedTaskId = val),
+                // Custom Task Selector (Glassmorphism)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.white10),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<int>(
+                      value: _selectedTaskId,
+                      dropdownColor: const Color(0xFF0F172A),
+                      icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white38),
+                      style: const TextStyle(color: Colors.white, fontSize: 16),
+                      hint: const Text('Select a focus area', style: TextStyle(color: Colors.white38)),
+                      items: _availableTasks.map((t) {
+                        return DropdownMenuItem(value: t.id, child: Text(t.title));
+                      }).toList(),
+                      onChanged: (val) => setState(() => _selectedTaskId = val),
+                    ),
+                  ),
                 ),
-                const SizedBox(height: 20),
-                ElevatedButton.icon(
-                  onPressed: _selectedTaskId == null ? null : _startSession,
-                  icon: const Icon(Icons.bolt),
-                  label: const Text('Enter Focus Mode'),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-                    textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)
+                const SizedBox(height: 24),
+                // Duration Slider
+                 Column(
+                  children: [
+                    Text(
+                      'DURATION: ${_sessionDurationMinutes.toInt()} MINUTES',
+                      style: const TextStyle(color: Colors.blueAccent, letterSpacing: 2, fontSize: 12, fontWeight: FontWeight.bold),
+                    ),
+                    SliderTheme(
+                      data: SliderTheme.of(context).copyWith(
+                        activeTrackColor: Colors.blueAccent,
+                        inactiveTrackColor: Colors.white10,
+                        thumbColor: Colors.white,
+                        overlayColor: Colors.blueAccent.withOpacity(0.2),
+                      ),
+                      child: Slider(
+                        value: _sessionDurationMinutes,
+                        min: 5,
+                        max: 120,
+                        divisions: 23,
+                        onChanged: (val) => setState(() => _sessionDurationMinutes = val),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                GestureDetector(
+                  onTap: _selectedTaskId == null ? null : _startSession,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 20),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(40),
+                      gradient: _selectedTaskId == null 
+                        ? const LinearGradient(colors: [Colors.white10, Colors.white10])
+                        : const LinearGradient(colors: [Colors.blueAccent, Colors.indigoAccent]),
+                      boxShadow: _selectedTaskId == null ? [] : [
+                        BoxShadow(color: Colors.blueAccent.withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 8))
+                      ],
+                    ),
+                    child: const Text('IGNITE FOCUS', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 2)),
                   ),
                 ),
               ],
             ] else
-              ElevatedButton(
-                onPressed: _stopSession,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white24, 
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15)
-                ),
-                child: const Text('End Session Early'),
+              TextButton(
+                onPressed: () => _stopSession(completed: false),
+                child: const Text('ABORT MISSION', style: TextStyle(color: Colors.white24, letterSpacing: 2, fontSize: 12)),
               ),
           ],
         ),

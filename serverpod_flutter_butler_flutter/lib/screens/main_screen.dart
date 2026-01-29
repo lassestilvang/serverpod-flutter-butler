@@ -12,12 +12,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
-
-  final List<Widget> _screens = [
-    const DashboardScreen(),
-    const DeepWorkScreen(),
-    const InsightScreen(),
-  ];
+  int? _deepWorkTaskId; // State to pass to DeepWorkScreen
 
   void _onItemTapped(int index) {
     setState(() {
@@ -25,27 +20,46 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
+  void _navigateToDeepWork(int taskId) {
+    setState(() {
+      _deepWorkTaskId = taskId;
+      _selectedIndex = 1; // Switch to Deep Work tab
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _screens[_selectedIndex],
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: [
+          DashboardScreen(onStartFocus: _navigateToDeepWork),
+          DeepWorkScreen(initialTaskId: _deepWorkTaskId),
+          const InsightScreen(),
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.timer),
-            label: 'TimeBox',
+            icon: Icon(Icons.dashboard_rounded),
+            label: 'Command',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.self_improvement),
-            label: 'Deep Work',
+            icon: Icon(Icons.lens_blur),
+            label: 'Focus',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart),
-            label: 'Insights',
+            icon: Icon(Icons.insights_rounded),
+            label: 'Intelligence',
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue,
+        selectedItemColor: Colors.blueAccent,
+        unselectedItemColor: Colors.white24,
+        backgroundColor: const Color(0xFF020617), // Match deep bg
+        elevation: 0,
+        type: BottomNavigationBarType.fixed,
+        showUnselectedLabels: true,
         onTap: _onItemTapped,
       ),
     );
