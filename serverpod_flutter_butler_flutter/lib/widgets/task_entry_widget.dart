@@ -57,6 +57,7 @@ class _TaskEntryWidgetState extends State<TaskEntryWidget> {
       final mainTask = Task(
         title: title,
         isCompleted: false,
+        createdAt: DateTime.now(),
       );
       final savedMainTask = await client.tasks.addTask(mainTask);
 
@@ -66,6 +67,7 @@ class _TaskEntryWidgetState extends State<TaskEntryWidget> {
           title: subtaskTitle,
           isCompleted: false,
           parentTaskId: savedMainTask.id,
+          createdAt: DateTime.now(),
         );
         await client.tasks.addTask(subtask);
       }

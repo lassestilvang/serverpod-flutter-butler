@@ -10,11 +10,17 @@ class TasksEndpoint extends Endpoint {
 
   /// Adds a new task to the database.
   Future<Task> addTask(Session session, Task task) async {
+    task.createdAt = DateTime.now();
     return await Task.db.insertRow(session, task);
   }
 
   /// Updates an existing task in the database.
   Future<Task> updateTask(Session session, Task task) async {
+    if (task.isCompleted && task.completedAt == null) {
+      task.completedAt = DateTime.now();
+    } else if (!task.isCompleted) {
+      task.completedAt = null;
+    }
     return await Task.db.updateRow(session, task);
   }
 

@@ -23,6 +23,8 @@ abstract class Task implements _i1.SerializableModel {
     required this.isCompleted,
     this.parentTaskId,
     this.parentTask,
+    required this.createdAt,
+    this.completedAt,
   });
 
   factory Task({
@@ -32,6 +34,8 @@ abstract class Task implements _i1.SerializableModel {
     required bool isCompleted,
     int? parentTaskId,
     _i2.Task? parentTask,
+    required DateTime createdAt,
+    DateTime? completedAt,
   }) = _TaskImpl;
 
   factory Task.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -45,6 +49,14 @@ abstract class Task implements _i1.SerializableModel {
           ? null
           : _i3.Protocol().deserialize<_i2.Task>(
               jsonSerialization['parentTask'],
+            ),
+      createdAt: _i1.DateTimeJsonExtension.fromJson(
+        jsonSerialization['createdAt'],
+      ),
+      completedAt: jsonSerialization['completedAt'] == null
+          ? null
+          : _i1.DateTimeJsonExtension.fromJson(
+              jsonSerialization['completedAt'],
             ),
     );
   }
@@ -64,6 +76,10 @@ abstract class Task implements _i1.SerializableModel {
 
   _i2.Task? parentTask;
 
+  DateTime createdAt;
+
+  DateTime? completedAt;
+
   /// Returns a shallow copy of this [Task]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
@@ -74,6 +90,8 @@ abstract class Task implements _i1.SerializableModel {
     bool? isCompleted,
     int? parentTaskId,
     _i2.Task? parentTask,
+    DateTime? createdAt,
+    DateTime? completedAt,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -85,6 +103,8 @@ abstract class Task implements _i1.SerializableModel {
       'isCompleted': isCompleted,
       if (parentTaskId != null) 'parentTaskId': parentTaskId,
       if (parentTask != null) 'parentTask': parentTask?.toJson(),
+      'createdAt': createdAt.toJson(),
+      if (completedAt != null) 'completedAt': completedAt?.toJson(),
     };
   }
 
@@ -104,6 +124,8 @@ class _TaskImpl extends Task {
     required bool isCompleted,
     int? parentTaskId,
     _i2.Task? parentTask,
+    required DateTime createdAt,
+    DateTime? completedAt,
   }) : super._(
          id: id,
          title: title,
@@ -111,6 +133,8 @@ class _TaskImpl extends Task {
          isCompleted: isCompleted,
          parentTaskId: parentTaskId,
          parentTask: parentTask,
+         createdAt: createdAt,
+         completedAt: completedAt,
        );
 
   /// Returns a shallow copy of this [Task]
@@ -124,6 +148,8 @@ class _TaskImpl extends Task {
     bool? isCompleted,
     Object? parentTaskId = _Undefined,
     Object? parentTask = _Undefined,
+    DateTime? createdAt,
+    Object? completedAt = _Undefined,
   }) {
     return Task(
       id: id is int? ? id : this.id,
@@ -134,6 +160,8 @@ class _TaskImpl extends Task {
       parentTask: parentTask is _i2.Task?
           ? parentTask
           : this.parentTask?.copyWith(),
+      createdAt: createdAt ?? this.createdAt,
+      completedAt: completedAt is DateTime? ? completedAt : this.completedAt,
     );
   }
 }

@@ -24,6 +24,8 @@ abstract class Task implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
     required this.isCompleted,
     this.parentTaskId,
     this.parentTask,
+    required this.createdAt,
+    this.completedAt,
   });
 
   factory Task({
@@ -33,6 +35,8 @@ abstract class Task implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
     required bool isCompleted,
     int? parentTaskId,
     _i2.Task? parentTask,
+    required DateTime createdAt,
+    DateTime? completedAt,
   }) = _TaskImpl;
 
   factory Task.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -46,6 +50,14 @@ abstract class Task implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
           ? null
           : _i3.Protocol().deserialize<_i2.Task>(
               jsonSerialization['parentTask'],
+            ),
+      createdAt: _i1.DateTimeJsonExtension.fromJson(
+        jsonSerialization['createdAt'],
+      ),
+      completedAt: jsonSerialization['completedAt'] == null
+          ? null
+          : _i1.DateTimeJsonExtension.fromJson(
+              jsonSerialization['completedAt'],
             ),
     );
   }
@@ -67,6 +79,10 @@ abstract class Task implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
 
   _i2.Task? parentTask;
 
+  DateTime createdAt;
+
+  DateTime? completedAt;
+
   @override
   _i1.Table<int?> get table => t;
 
@@ -80,6 +96,8 @@ abstract class Task implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
     bool? isCompleted,
     int? parentTaskId,
     _i2.Task? parentTask,
+    DateTime? createdAt,
+    DateTime? completedAt,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -91,6 +109,8 @@ abstract class Task implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
       'isCompleted': isCompleted,
       if (parentTaskId != null) 'parentTaskId': parentTaskId,
       if (parentTask != null) 'parentTask': parentTask?.toJson(),
+      'createdAt': createdAt.toJson(),
+      if (completedAt != null) 'completedAt': completedAt?.toJson(),
     };
   }
 
@@ -104,6 +124,8 @@ abstract class Task implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
       'isCompleted': isCompleted,
       if (parentTaskId != null) 'parentTaskId': parentTaskId,
       if (parentTask != null) 'parentTask': parentTask?.toJsonForProtocol(),
+      'createdAt': createdAt.toJson(),
+      if (completedAt != null) 'completedAt': completedAt?.toJson(),
     };
   }
 
@@ -147,6 +169,8 @@ class _TaskImpl extends Task {
     required bool isCompleted,
     int? parentTaskId,
     _i2.Task? parentTask,
+    required DateTime createdAt,
+    DateTime? completedAt,
   }) : super._(
          id: id,
          title: title,
@@ -154,6 +178,8 @@ class _TaskImpl extends Task {
          isCompleted: isCompleted,
          parentTaskId: parentTaskId,
          parentTask: parentTask,
+         createdAt: createdAt,
+         completedAt: completedAt,
        );
 
   /// Returns a shallow copy of this [Task]
@@ -167,6 +193,8 @@ class _TaskImpl extends Task {
     bool? isCompleted,
     Object? parentTaskId = _Undefined,
     Object? parentTask = _Undefined,
+    DateTime? createdAt,
+    Object? completedAt = _Undefined,
   }) {
     return Task(
       id: id is int? ? id : this.id,
@@ -177,6 +205,8 @@ class _TaskImpl extends Task {
       parentTask: parentTask is _i2.Task?
           ? parentTask
           : this.parentTask?.copyWith(),
+      createdAt: createdAt ?? this.createdAt,
+      completedAt: completedAt is DateTime? ? completedAt : this.completedAt,
     );
   }
 }
@@ -203,6 +233,18 @@ class TaskUpdateTable extends _i1.UpdateTable<TaskTable> {
     table.parentTaskId,
     value,
   );
+
+  _i1.ColumnValue<DateTime, DateTime> createdAt(DateTime value) =>
+      _i1.ColumnValue(
+        table.createdAt,
+        value,
+      );
+
+  _i1.ColumnValue<DateTime, DateTime> completedAt(DateTime? value) =>
+      _i1.ColumnValue(
+        table.completedAt,
+        value,
+      );
 }
 
 class TaskTable extends _i1.Table<int?> {
@@ -224,6 +266,14 @@ class TaskTable extends _i1.Table<int?> {
       'parentTaskId',
       this,
     );
+    createdAt = _i1.ColumnDateTime(
+      'createdAt',
+      this,
+    );
+    completedAt = _i1.ColumnDateTime(
+      'completedAt',
+      this,
+    );
   }
 
   late final TaskUpdateTable updateTable;
@@ -237,6 +287,10 @@ class TaskTable extends _i1.Table<int?> {
   late final _i1.ColumnInt parentTaskId;
 
   _i2.TaskTable? _parentTask;
+
+  late final _i1.ColumnDateTime createdAt;
+
+  late final _i1.ColumnDateTime completedAt;
 
   _i2.TaskTable get parentTask {
     if (_parentTask != null) return _parentTask!;
@@ -258,6 +312,8 @@ class TaskTable extends _i1.Table<int?> {
     description,
     isCompleted,
     parentTaskId,
+    createdAt,
+    completedAt,
   ];
 
   @override

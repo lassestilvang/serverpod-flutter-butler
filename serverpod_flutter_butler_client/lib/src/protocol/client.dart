@@ -284,6 +284,14 @@ class EndpointAnalytics extends _i2.EndpointRef {
     'getDailySummary',
     {},
   );
+
+  /// Fetches all focus sessions for history analysis
+  _i3.Future<List<_i5.FocusSession>> getAllFocusSessions() =>
+      caller.callServerEndpoint<List<_i5.FocusSession>>(
+        'analytics',
+        'getAllFocusSessions',
+        {},
+      );
 }
 
 /// {@category Endpoint}

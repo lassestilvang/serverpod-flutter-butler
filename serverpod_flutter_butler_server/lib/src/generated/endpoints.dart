@@ -328,6 +328,16 @@ class Endpoints extends _i1.EndpointDispatch {
               ) async => (endpoints['analytics'] as _i5.AnalyticsEndpoint)
                   .getDailySummary(session),
         ),
+        'getAllFocusSessions': _i1.MethodConnector(
+          name: 'getAllFocusSessions',
+          params: {},
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['analytics'] as _i5.AnalyticsEndpoint)
+                  .getAllFocusSessions(session),
+        ),
       },
     );
     connectors['focus'] = _i1.EndpointConnector(

@@ -31,12 +31,11 @@ class _DeepWorkScreenState extends State<DeepWorkScreen> {
   @override
   void didUpdateWidget(DeepWorkScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
+    _loadTasks(); // Refresh list whenever widget updates (e.g. tab switch in MainScreen)
     if (widget.initialTaskId != null && widget.initialTaskId != oldWidget.initialTaskId) {
       setState(() {
         _selectedTaskId = widget.initialTaskId;
       });
-       // Optional: Auto-start if requested, but user preferred flow might be strict selection first.
-       // We'll leave it as pre-selection for now.
     }
   }
 
@@ -70,7 +69,7 @@ class _DeepWorkScreenState extends State<DeepWorkScreen> {
       setState(() {
         _isSessionActive = true;
         _secondsRemaining = durationSeconds;
-        final taskTitle = _availableTasks.firstWhere((t) => t.id == _selectedTaskId, orElse: () => Task(title: 'Deep Work', isCompleted: false, parentTaskId: 0)).title;
+        final taskTitle = _availableTasks.firstWhere((t) => t.id == _selectedTaskId, orElse: () => Task(title: 'Deep Work', isCompleted: false, parentTaskId: 0, createdAt: DateTime.now())).title;
         _statusMessage = 'Currently Focusing on:\n"$taskTitle"';
       });
 
@@ -222,7 +221,7 @@ class _DeepWorkScreenState extends State<DeepWorkScreen> {
                   ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<int>(
-                      value: _selectedTaskId,
+                      value: _availableTasks.any((t) => t.id == _selectedTaskId) ? _selectedTaskId : null,
                       dropdownColor: const Color(0xFF0F172A),
                       icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white38),
                       style: const TextStyle(color: Colors.white, fontSize: 16),
@@ -234,6 +233,74 @@ class _DeepWorkScreenState extends State<DeepWorkScreen> {
                     ),
                   ),
                 ),
+                
+                // DATA CONTEXT: Show Parent or Subtasks
+                if (_selectedTaskId != null) ...[
+                   Builder(
+                     builder: (context) {
+                       final selectedTask = _availableTasks.firstWhere((t) => t.id == _selectedTaskId);
+                       final parentId = selectedTask.parentTaskId;
+                       final parentTask = parentId != null 
+                           ? _availableTasks.firstWhere((t) => t.id == parentId, orElse: () => Task(title: 'Unknown Parent', isCompleted: false, parentTaskId: 0, createdAt: DateTime.now())) 
+                           : null;
+                       
+                       // Find subtasks if this is a parent
+                       final subtasks = _availableTasks.where((t) => t.parentTaskId == selectedTask.id).toList();
+
+                       return Column(
+                         children: [
+                           if (parentTask != null && parentTask.title != 'Unknown Parent') ...[
+                             const SizedBox(height: 16),
+                             Container(
+                               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                               decoration: BoxDecoration(
+                                 color: Colors.blueAccent.withOpacity(0.1),
+                                 borderRadius: BorderRadius.circular(12),
+                                 border: Border.all(color: Colors.blueAccent.withOpacity(0.2)),
+                               ),
+                               child: Row(
+                                 mainAxisSize: MainAxisSize.min,
+                                 children: [
+                                   const Icon(Icons.account_tree_outlined, color: Colors.blueAccent, size: 16),
+                                   const SizedBox(width: 8),
+                                   Text('CONTRIBUTING TO: ${parentTask.title.toUpperCase()}', style: const TextStyle(color: Colors.blueAccent, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1)),
+                                 ],
+                               ),
+                             ),
+                           ],
+                           if (subtasks.isNotEmpty) ...[
+                             const SizedBox(height: 16),
+                             Container(
+                               padding: const EdgeInsets.all(16),
+                               decoration: BoxDecoration(
+                                 color: Colors.white.withOpacity(0.03),
+                                 borderRadius: BorderRadius.circular(16),
+                               ),
+                               child: Column(
+                                 crossAxisAlignment: CrossAxisAlignment.start,
+                                 children: [
+                                   Text('SUB-OBJECTIVES (${subtasks.length})', style: const TextStyle(color: Colors.white38, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.5)),
+                                   const SizedBox(height: 8),
+                                   ...subtasks.map((s) => Padding(
+                                     padding: const EdgeInsets.symmetric(vertical: 4),
+                                     child: Row(
+                                        children: [
+                                          const Icon(Icons.circle, size: 6, color: Colors.white24),
+                                          const SizedBox(width: 8),
+                                          Text(s.title, style: const TextStyle(color: Colors.white70, fontSize: 12)),
+                                        ],
+                                     ),
+                                   )),
+                                 ],
+                               ),
+                             )
+                           ]
+                         ],
+                       );
+                     }
+                   ),
+                ],
+
                 const SizedBox(height: 24),
                 // Duration Slider
                  Column(

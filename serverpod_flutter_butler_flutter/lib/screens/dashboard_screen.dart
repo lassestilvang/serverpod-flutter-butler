@@ -19,6 +19,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
   bool _isLoadingTip = true;
 
   @override
+  void didUpdateWidget(DashboardScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _refreshDashboard();
+  }
+
+  @override
   void initState() {
     super.initState();
     _confettiController = ConfettiController(duration: const Duration(seconds: 2));
@@ -195,7 +201,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
               final allTasks = snapshot.data ?? [];
               final activeTasks = allTasks.where((t) => !t.isCompleted).toList();
 
-              if (activeTasks.isEmpty) {
+              // Grouping Logic
+              final mainTasks = activeTasks.where((t) => t.parentTaskId == null).toList();
+              final subTasks = activeTasks.where((t) => t.parentTaskId != null).toList();
+              
+              // Handle orphans (active subtasks whose parents are completed or missing)
+              final mainTaskIds = mainTasks.map((e) => e.id).toSet();
+              final orphans = subTasks.where((t) => !mainTaskIds.contains(t.parentTaskId)).toList();
+              
+              // Create a display list of "Roots" (True Roots + Orphans treated as Roots)
+              final displayRoots = [...mainTasks, ...orphans];
+
+              if (displayRoots.isEmpty) {
                 return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -223,7 +240,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               return ListView(
                 padding: const EdgeInsets.fromLTRB(24, 120, 24, 100),
                 children: [
-                  // Butler's Counsel - Glassmorphism
+                   // Butler's Counsel - Glassmorphism
                   Container(
                     padding: const EdgeInsets.all(32),
                     decoration: BoxDecoration(
@@ -291,72 +308,122 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 3)
                   ),
                   const SizedBox(height: 24),
-                  // Task List with Animated Cards
-                  for (final task in activeTasks) ...[
-                    AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      margin: const EdgeInsets.only(bottom: 16),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.03),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.05),
-                          width: 1.5,
-                        ),
-                      ),
-                      child: ListTile(
-                        onTap: () => _editTask(task),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                        leading: InkWell(
-                          onTap: () => _markCompleted(task),
-                          child: Container(
-                            width: 32,
-                            height: 32,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white24, width: 2),
-                            ),
-                            child: task.isCompleted ? const Icon(Icons.check, size: 20, color: Colors.greenAccent) : null,
-                          ),
-                        ),
-                        title: Text(
-                          task.title,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.5,
-                            color: Colors.white.withOpacity(0.9),
-                          ),
-                        ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.play_arrow_rounded, color: Colors.blueAccent, size: 32),
-                              onPressed: () {
-                                if (widget.onStartFocus != null && task.id != null) {
-                                  widget.onStartFocus!(task.id!);
-                                }
-                              },
-                            ),
-                            PopupMenuButton(
-                              icon: const Icon(Icons.more_horiz, color: Colors.white38),
-                              itemBuilder: (context) => [
-                                const PopupMenuItem(value: 'delete', child: Text('Delete Task')),
-                              ],
-                              onSelected: (val) {
-                                if (val == 'delete') _deleteTask(task);
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                  // Render Task Hierarchy
+                  for (final task in displayRoots) ...[
+                    _buildTaskCard(task, subTasks.where((s) => s.parentTaskId == task.id).toList()),
                   ]
                 ],
               );
             },
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTaskCard(Task task, List<Task> subTasks) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.03),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.05),
+          width: 1.5,
+        ),
+      ),
+      child: Column(
+        children: [
+          // Main Task
+          ListTile(
+            onTap: () => _editTask(task),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            leading: InkWell(
+              onTap: () => _markCompleted(task),
+              child: Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white24, width: 2),
+                ),
+                child: task.isCompleted ? const Icon(Icons.check, size: 20, color: Colors.greenAccent) : null,
+              ),
+            ),
+            title: Text(
+              task.title,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.5,
+                color: Colors.white.withOpacity(0.9),
+              ),
+            ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.play_arrow_rounded, color: Colors.blueAccent, size: 32),
+                  onPressed: () {
+                    if (widget.onStartFocus != null && task.id != null) {
+                      widget.onStartFocus!(task.id!);
+                    }
+                  },
+                ),
+                PopupMenuButton(
+                  icon: const Icon(Icons.more_horiz, color: Colors.white38),
+                  itemBuilder: (context) => [
+                    const PopupMenuItem(value: 'delete', child: Text('Delete Task')),
+                  ],
+                  onSelected: (val) {
+                    if (val == 'delete') _deleteTask(task);
+                  },
+                ),
+              ],
+            ),
+          ),
+          
+          // Subtasks List
+          if (subTasks.isNotEmpty) ...[
+            Container(
+              decoration: BoxDecoration(
+                border: Border(top: BorderSide(color: Colors.white.withOpacity(0.05))),
+                color: Colors.black12,
+              ),
+              child: Column(
+                children: subTasks.map((sub) => ListTile(
+                  onTap: () => _editTask(sub),
+                  dense: true,
+                  contentPadding: const EdgeInsets.fromLTRB(60, 0, 16, 0),
+                  leading: InkWell(
+                    onTap: () => _markCompleted(sub),
+                    child: Container(
+                      width: 20,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white24, width: 1.5),
+                      ),
+                      child: sub.isCompleted ? const Icon(Icons.check, size: 14, color: Colors.greenAccent) : null,
+                    ),
+                  ),
+                  title: Text(
+                    sub.title,
+                    style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 14),
+                  ),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.play_arrow_rounded, color: Colors.white24, size: 20),
+                    onPressed: () {
+                      if (widget.onStartFocus != null && sub.id != null) {
+                        widget.onStartFocus!(sub.id!);
+                      }
+                    },
+                  ),
+                )).toList(),
+              ),
+            ),
+          ],
         ],
       ),
     );

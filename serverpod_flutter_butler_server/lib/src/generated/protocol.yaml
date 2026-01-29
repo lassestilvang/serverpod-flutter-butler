@@ -13,6 +13,7 @@ jwtRefresh:
 analytics:
   - getDailyStats:
   - getDailySummary:
+  - getAllFocusSessions:
 focus:
   - startSession:
   - stopSession:

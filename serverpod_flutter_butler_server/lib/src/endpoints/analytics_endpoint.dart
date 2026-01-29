@@ -56,4 +56,14 @@ class AnalyticsEndpoint extends Endpoint {
     final service = GeminiService(apiKey);
     return await service.generateDailySummary(session, taskTitles);
   }
+
+  /// Fetches all focus sessions for history analysis
+  Future<List<FocusSession>> getAllFocusSessions(Session session) async {
+    return await FocusSession.db.find(
+      session, 
+      where: (t) => t.actualEndTime.notEquals(null),
+      orderBy: (t) => t.startTime,
+      orderDescending: true,
+    );
+  }
 }

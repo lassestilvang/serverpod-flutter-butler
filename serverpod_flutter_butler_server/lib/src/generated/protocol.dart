@@ -20,7 +20,10 @@ import 'focus_session.dart' as _i5;
 import 'greetings/greeting.dart' as _i6;
 import 'pomodoro.dart' as _i7;
 import 'task.dart' as _i8;
-import 'package:serverpod_flutter_butler_server/src/generated/task.dart' as _i9;
+import 'package:serverpod_flutter_butler_server/src/generated/focus_session.dart'
+    as _i9;
+import 'package:serverpod_flutter_butler_server/src/generated/task.dart'
+    as _i10;
 export 'focus_session.dart';
 export 'greetings/greeting.dart';
 export 'pomodoro.dart';
@@ -223,6 +226,18 @@ class Protocol extends _i1.SerializationManagerServer {
           isNullable: true,
           dartType: 'int?',
         ),
+        _i2.ColumnDefinition(
+          name: 'createdAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+        _i2.ColumnDefinition(
+          name: 'completedAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: true,
+          dartType: 'DateTime?',
+        ),
       ],
       foreignKeys: [
         _i2.ForeignKeyDefinition(
@@ -315,8 +330,14 @@ class Protocol extends _i1.SerializationManagerServer {
           )
           as T;
     }
-    if (t == List<_i9.Task>) {
-      return (data as List).map((e) => deserialize<_i9.Task>(e)).toList() as T;
+    if (t == List<_i9.FocusSession>) {
+      return (data as List)
+              .map((e) => deserialize<_i9.FocusSession>(e))
+              .toList()
+          as T;
+    }
+    if (t == List<_i10.Task>) {
+      return (data as List).map((e) => deserialize<_i10.Task>(e)).toList() as T;
     }
     if (t == List<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toList() as T;

@@ -6,3 +6,5 @@ fields:
   isCompleted: bool
   # Parent task for subtasks (nullable self-relation)
   parentTask: Task?, relation(optional)
+  createdAt: DateTime
+  completedAt: DateTime?
