@@ -75,12 +75,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Future<void> _markCompleted(Task task) async {
     try {
+      if (mounted) {
+        setState(() {
+          // Optimistic: remove from active immediately
+          _allTasks.removeWhere((t) => t.id == task.id);
+        });
+        _confettiController.play();
+      }
       task.isCompleted = true;
+      task.completedAt = DateTime.now();
       await client.tasks.updateTask(task);
-      _confettiController.play();
-      _silentRefresh();
+      _silentRefresh(); // Sync final state (in case server added metadata)
     } catch(e) {
       if(mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Err: $e')));
+      _silentRefresh(); // Revert local state on error
     }
   }
 

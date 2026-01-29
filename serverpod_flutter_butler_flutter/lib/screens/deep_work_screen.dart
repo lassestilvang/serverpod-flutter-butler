@@ -45,7 +45,24 @@ class _DeepWorkScreenState extends State<DeepWorkScreen> {
       final tasks = await client.tasks.getAllTasks();
       if (mounted) {
         setState(() {
-          _availableTasks = tasks.where((t) => !t.isCompleted).toList();
+          final activeTasks = tasks.where((t) => !t.isCompleted).toList();
+
+          // Dashboard Hierarchy Logic
+          final mainTasks = activeTasks.where((t) => t.parentTaskId == null).toList();
+          final subTasksList = activeTasks.where((t) => t.parentTaskId != null).toList();
+          final mainTaskIds = mainTasks.map((e) => e.id).toSet();
+          final orphans = subTasksList.where((t) => !mainTaskIds.contains(t.parentTaskId)).toList();
+          final displayRoots = [...mainTasks, ...orphans];
+
+          // Build Flat Ordered List: Root -> Children
+          final orderedTasks = <Task>[];
+          for (final root in displayRoots) {
+            orderedTasks.add(root);
+            final children = subTasksList.where((s) => s.parentTaskId == root.id).toList();
+            orderedTasks.addAll(children);
+          }
+
+          _availableTasks = orderedTasks;
           _isLoadingTasks = false;
         });
       }
