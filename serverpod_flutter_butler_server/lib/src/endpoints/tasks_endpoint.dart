@@ -5,11 +5,11 @@ import '../services/gemini_service.dart';
 class TasksEndpoint extends Endpoint {
   /// Fetches all tasks from the database.
   /// Fetches tasks from the database with pagination.
-  Future<List<Task>> getAllTasks(Session session, {int limit = 20, int offset = 0}) async {
+  Future<List<Task>> getAllTasks(Session session, {int? limit, int? offset}) async {
     return await Task.db.find(
       session,
-      limit: limit,
-      offset: offset,
+      limit: limit ?? 20,
+      offset: offset ?? 0,
       orderBy: (t) => t.createdAt,
       orderDescending: true,
     );

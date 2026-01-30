@@ -390,13 +390,13 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'limit': _i1.ParameterDescription(
               name: 'limit',
-              type: _i1.getType<int>(),
-              nullable: false,
+              type: _i1.getType<int?>(),
+              nullable: true,
             ),
             'offset': _i1.ParameterDescription(
               name: 'offset',
-              type: _i1.getType<int>(),
-              nullable: false,
+              type: _i1.getType<int?>(),
+              nullable: true,
             ),
           },
           call:

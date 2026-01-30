@@ -710,8 +710,8 @@ class _TasksEndpoint {
 
   _i3.Future<List<_i6.Task>> getAllTasks(
     _i1.TestSessionBuilder sessionBuilder, {
-    required int limit,
-    required int offset,
+    int? limit,
+    int? offset,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =

@@ -1,0 +1,268 @@
+Fetching logs from 2026-01-30 10:48:40.337073 to newest. Display time zone: local (CET).
+Timestamp                   | Level   | Content
+----------------------------+---------+--------
+2026-01-30 10:50:59.552586  | ERROR   | {"touched":"2026-01-30T09:50:59.560749Z","method":"getDailyStats","__className__":"serverpod.SessionLogEntry","endpoint":"analytics","isOpen":false,"serverId":"default","error":"DatabaseQueryException: { message: Table not found, have you applied the database migration? (relation \"task\" does not exist), code: 42P01, position: 288 }","stackTrace":"#0      _PgSessionBase._sendAndWaitForQuery (package:postgres/src/v3/connection.dart:87)\n#1      _PgSessionBase._prepare (package:postgres/src/v3/connection.dart:195)\n#2      _PgSessionBase.execute (package:postgres/src/v3/connection.dart:171)\n#3      _PoolConnection.execute (package:postgres/src/pool/pool_impl.dart:298)\n#4      PoolImplementation.execute.<anonymous closure> (package:postgres/src/pool/pool_impl.dart:63)\n#5      PoolImplementation.withConnection (package:postgres/src/pool/pool_impl.dart:153)\n<asynchronous suspension>\n#6      DatabaseConnection._query (package:serverpod/src/database/adapters/postgres/database_connection.dart:527)\n<asynchronous suspension>\n#7      DatabaseConnection._mappedResultsQuery (package:serverpod/src/database/adapters/postgres/database_connection.dart:626)\n<asynchronous suspension>\n#8      DatabaseConnection._deserializedMappedQuery (package:serverpod/src/database/adapters/postgres/database_connection.dart:659)\n<asynchronous suspension>\n#9      AnalyticsEndpoint.getDailyStats (package:serverpod_flutter_butler_server/src/endpoints/analytics_endpoint.dart:10)\n<asynchronous suspension>\n#10     Server._handleEndpointCall (package:serverpod/src/server/server.dart:444)\n<asynchronous suspension>\n#11     Server._endpoints (package:serverpod/src/server/server.dart:311)\n<asynchronous suspension>\n#12     Server._reportException.<anonymous closure> (package:serverpod/src/server/server.dart:205)\n<asynchronous suspension>\n#13     Server._headers.<anonymous closure> (package:serverpod/src/server/server.dart:286)\n<asynchronous suspension>\n#14     _RoutingMiddlewareBuilder.call.<anonymous closure> (package:relic/src/middleware/routing_middleware.dart:121)\n<asynchronous suspension>\n#15     _RelicServer._wrapHandlerWithMiddleware.<anonymous closure> (package:relic/src/relic_server.dart:151)\n<asynchronous suspension>\n#16     _RelicServer._handleRequest (package:relic/src/relic_server.dart:127)\n<asynchronous suspension>\n","numQueries":1,"id":613555950,"duration":0.00816,"slow":false}
+2026-01-30 10:50:59.552586  | INFO    | {"serverId":"default","method":"getDailyStats","__className__":"serverpod.SessionLogEntry","id":613555950,"endpoint":"analytics","touched":"2026-01-30T09:50:59.560467Z","isOpen":true}
+2026-01-30 10:50:59.561567  | ERROR   | {"serverId":"default","slow":false,"order":1,"duration":0.006233,"sessionLogId":613555950,"stackTrace":"#0      _PgSessionBase._sendAndWaitForQuery (package:postgres/src/v3/connection.dart:87)\n#1      _PgSessionBase._prepare (package:postgres/src/v3/connection.dart:195)\n#2      _PgSessionBase.execute (package:postgres/src/v3/connection.dart:171)\n#3      _PoolConnection.execute (package:postgres/src/pool/pool_impl.dart:298)\n#4      PoolImplementation.execute.<anonymous closure> (package:postgres/src/pool/pool_impl.dart:63)\n#5      PoolImplementation.withConnection (package:postgres/src/pool/pool_impl.dart:153)\n<asynchronous suspension>\n#6      DatabaseConnection._query (package:serverpod/src/database/adapters/postgres/database_connection.dart:527)\n<asynchronous suspension>\n#7      DatabaseConnection._mappedResultsQuery (package:serverpod/src/database/adapters/postgres/database_connection.dart:626)\n<asynchronous suspension>\n#8      DatabaseConnection._deserializedMappedQuery (package:serverpod/src/database/adapters/postgres/database_connection.dart:659)\n<asynchronous suspension>\n#9      AnalyticsEndpoint.getDailyStats (package:serverpod_flutter_butler_server/src/endpoints/analytics_endpoint.dart:10)\n<asynchronous suspension>\n#10     Server._handleEndpointCall (package:serverpod/src/server/server.dart:444)\n<asynchronous suspension>\n#11     Server._endpoints (package:serverpod/src/server/server.dart:311)\n<asynchronous suspension>\n#12     Server._reportException.<anonymous closure> (package:serverpod/src/server/server.dart:205)\n<asynchronous suspension>\n#13     Server._headers.<anonymous closure> (package:serverpod/src/server/server.dart:286)\n<asynchronous suspension>\n#14     _RoutingMiddlewareBuilder.call.<anonymous closure> (package:relic/src/middleware/routing_middleware.dart:121)\n<asynchronous suspension>\n#15     _RelicServer._wrapHandlerWithMiddleware.<anonymous closure> (package:relic/src/relic_server.dart:151)\n<asynchronous suspension>\n#16     _RelicServer._handleRequest (package:relic/src/relic_server.dart:127)\n<asynchronous suspension>\n","query":"SELECT \"task\".\"id\" AS \"task.id\", \"task\".\"title\" AS \"task.title\", \"task\".\"description\" AS \"task.description\", \"task\".\"isCompleted\" AS \"task.isCompleted\", \"task\".\"parentTaskId\" AS \"task.parentTaskId\", \"task\".\"createdAt\" AS \"task.createdAt\", \"task\".\"completedAt\" AS \"task.completedAt\" FROM \"task\" WHERE \"task\".\"isCompleted\" = true","error":"DatabaseQueryException: { message: Table not found, have you applied the database migration? (relation \"task\" does not exist), code: 42P01, position: 288 }","__className__":"serverpod.QueryLogEntry"}
+2026-01-30 10:50:59.561904  | ERROR   | 2026-01-30 09:50:59.561618Z ERROR: Internal server error. Request handler failed with exception.
+2026-01-30 10:50:59.561911  | ERROR   | 2026-01-30 09:50:59.561618Z ERROR: DatabaseQueryException: { message: Table not found, have you applied the database migration? (relation "task" does not exist), code: 42P01, position: 288 }
+2026-01-30 10:50:59.562343  | ERROR   | #0      _PgSessionBase._sendAndWaitForQuery (package:postgres/src/v3/connection.dart:87)
+2026-01-30 10:50:59.562388  | ERROR   | #1      _PgSessionBase._prepare (package:postgres/src/v3/connection.dart:195)
+2026-01-30 10:50:59.562392  | ERROR   | #2      _PgSessionBase.execute (package:postgres/src/v3/connection.dart:171)
+2026-01-30 10:50:59.562394  | ERROR   | #3      _PoolConnection.execute (package:postgres/src/pool/pool_impl.dart:298)
+2026-01-30 10:50:59.562398  | ERROR   | #4      PoolImplementation.execute.<anonymous closure> (package:postgres/src/pool/pool_impl.dart:63)
+2026-01-30 10:50:59.562400  | ERROR   | #5      PoolImplementation.withConnection (package:postgres/src/pool/pool_impl.dart:153)
+2026-01-30 10:50:59.562404  | ERROR   | <asynchronous suspension>
+2026-01-30 10:50:59.562407  | ERROR   | #6      DatabaseConnection._query (package:serverpod/src/database/adapters/postgres/database_connection.dart:527)
+2026-01-30 10:50:59.562410  | ERROR   | <asynchronous suspension>
+2026-01-30 10:50:59.562412  | ERROR   | #7      DatabaseConnection._mappedResultsQuery (package:serverpod/src/database/adapters/postgres/database_connection.dart:626)
+2026-01-30 10:50:59.562415  | ERROR   | <asynchronous suspension>
+2026-01-30 10:50:59.562418  | ERROR   | #8      DatabaseConnection._deserializedMappedQuery (package:serverpod/src/database/adapters/postgres/database_connection.dart:659)
+2026-01-30 10:50:59.562420  | ERROR   | <asynchronous suspension>
+2026-01-30 10:50:59.562423  | ERROR   | #9      AnalyticsEndpoint.getDailyStats (package:serverpod_flutter_butler_server/src/endpoints/analytics_endpoint.dart:10)
+2026-01-30 10:50:59.562425  | ERROR   | <asynchronous suspension>
+2026-01-30 10:50:59.562428  | ERROR   | #10     Server._handleEndpointCall (package:serverpod/src/server/server.dart:444)
+2026-01-30 10:50:59.562430  | ERROR   | <asynchronous suspension>
+2026-01-30 10:50:59.562433  | ERROR   | #11     Server._endpoints (package:serverpod/src/server/server.dart:311)
+2026-01-30 10:50:59.562463  | ERROR   | <asynchronous suspension>
+2026-01-30 10:50:59.562471  | ERROR   | #12     Server._reportException.<anonymous closure> (package:serverpod/src/server/server.dart:205)
+2026-01-30 10:50:59.562475  | ERROR   | <asynchronous suspension>
+2026-01-30 10:50:59.562480  | ERROR   | #13     Server._headers.<anonymous closure> (package:serverpod/src/server/server.dart:286)
+2026-01-30 10:50:59.562483  | ERROR   | <asynchronous suspension>
+2026-01-30 10:50:59.562487  | ERROR   | #14     _RoutingMiddlewareBuilder.call.<anonymous closure> (package:relic/src/middleware/routing_middleware.dart:121)
+2026-01-30 10:50:59.562491  | ERROR   | <asynchronous suspension>
+2026-01-30 10:50:59.562495  | ERROR   | #15     _RelicServer._wrapHandlerWithMiddleware.<anonymous closure> (package:relic/src/relic_server.dart:151)
+2026-01-30 10:50:59.562499  | ERROR   | <asynchronous suspension>
+2026-01-30 10:50:59.562503  | ERROR   | #16     _RelicServer._handleRequest (package:relic/src/relic_server.dart:127)
+2026-01-30 10:50:59.562508  | ERROR   | <asynchronous suspension>
+2026-01-30 10:50:59.562511  | ERROR   | {}
+2026-01-30 11:00:56.005852  | INFO    | SERVERPOD version: 3.2.3, dart: 3.8.3 (stable) (Thu Jul 31 08:37:15 2025 -0700) on "linux_x64", time: 2026-01-30 10:00:56.004623Z
+2026-01-30 11:00:56.009517  | INFO    | runMode: production
+2026-01-30 11:00:56.009545  | INFO    | serverId: stilvang-74f6d6dcd-s8h5c
+2026-01-30 11:00:56.009549  | INFO    | role: monolith
+2026-01-30 11:00:56.009552  | INFO    | loggingMode: normal
+2026-01-30 11:00:56.009555  | INFO    | applyMigrations: true
+2026-01-30 11:00:56.009559  | INFO    | applyRepairMigration: false
+2026-01-30 11:00:56.011574  | INFO    | SERVERPOD initialized, time: 2026-01-30 10:00:56.011482Z
+2026-01-30 11:00:56.583613  | INFO    | SIGTERM (15) received, time: 2026-01-30 10:00:56.583208Z
+2026-01-30 11:00:56.583668  | INFO    | SERVERPOD initiating shutdown, time: 2026-01-30 10:00:56.583344Z
+2026-01-30 11:00:56.585388  | INFO    | SERVERPOD shutdown completed, time: 2026-01-30 10:00:56.585112Z
+2026-01-30 11:00:56.788948  | ERROR   | Invalid serviceSecret in password file, Insights server disabled.Failed to apply migration 20260128220755898.
+2026-01-30 11:00:56.789     | ERROR   | DatabaseQueryException: { message: relation "serverpod_cloud_storage" already exists, code: 42P07 }
+2026-01-30 11:00:56.796631  | ERROR   | 2026-01-30 10:00:56.796414Z ERROR: Failed to apply database migrations.
+2026-01-30 11:00:56.796669  | ERROR   | 2026-01-30 10:00:56.796414Z ERROR: DatabaseQueryException: { message: relation "serverpod_cloud_storage" already exists, code: 42P07 }
+2026-01-30 11:00:56.801987  | ERROR   | package:postgres/src/v3/connection.dart 862                                    _PgResultStreamSubscription.handleError
+2026-01-30 11:00:56.802022  | ERROR   | package:postgres/src/v3/connection.dart 494                                    PgConnectionImplementation._handleMessage
+2026-01-30 11:00:56.802027  | ERROR   | dart:async/zone.dart 1538                                                      _rootRunUnary
+2026-01-30 11:00:56.802035  | ERROR   | dart:async/zone.dart 1429                                                      _CustomZone.runUnary
+2026-01-30 11:00:56.802037  | ERROR   | dart:async/zone.dart 1329                                                      _CustomZone.runUnaryGuarded
+2026-01-30 11:00:56.802040  | ERROR   | dart:async/stream_impl.dart 381                                                _BufferingStreamSubscription._sendData
+2026-01-30 11:00:56.802044  | ERROR   | dart:async/stream_impl.dart 312                                                _BufferingStreamSubscription._add
+2026-01-30 11:00:56.802046  | ERROR   | dart:async/stream_controller.dart 798                                          _SyncStreamControllerDispatch._sendData
+2026-01-30 11:00:56.802049  | ERROR   | dart:async/stream_controller.dart 663                                          _StreamController._add
+2026-01-30 11:00:56.802051  | ERROR   | dart:async/stream_controller.dart 618                                          _StreamController.add
+2026-01-30 11:00:56.802054  | ERROR   | dart:async/stream.dart 823                                                     Stream.asyncMap.<fn>.add
+2026-01-30 11:00:56.802056  | ERROR   | dart:async/zone.dart 1538                                                      _rootRunUnary
+2026-01-30 11:00:56.802060  | ERROR   | dart:async/stream_impl.dart 215                                                _BufferingStreamSubscription.resume
+2026-01-30 11:00:56.802063  | ERROR   | ===== asynchronous gap ===========================
+2026-01-30 11:00:56.802067  | ERROR   | package:postgres/src/v3/connection.dart 803                                    new _PgResultStreamSubscription.simpleQueryProtocol
+2026-01-30 11:00:56.802069  | ERROR   | package:postgres/src/v3/connection.dart 153                                    _PgSessionBase.execute
+2026-01-30 11:00:56.802072  | ERROR   | package:postgres/src/pool/pool_impl.dart 298                                   _PoolConnection.execute
+2026-01-30 11:00:56.802074  | ERROR   | package:postgres/src/pool/pool_impl.dart 63                                    PoolImplementation.execute.<fn>
+2026-01-30 11:00:56.802076  | ERROR   | package:postgres/src/pool/pool_impl.dart 153                                   PoolImplementation.withConnection
+2026-01-30 11:00:56.802079  | ERROR   | package:serverpod/src/database/adapters/postgres/database_connection.dart 527  DatabaseConnection._query
+2026-01-30 11:00:56.802097  | ERROR   | package:serverpod/src/database/adapters/postgres/database_connection.dart 607  DatabaseConnection.simpleExecute
+2026-01-30 11:00:56.802099  | ERROR   | package:serverpod/src/database/migrations/migration_manager.dart 182           MigrationManager._migrateToLatestModule
+2026-01-30 11:00:56.802102  | ERROR   | package:serverpod/src/database/migrations/migration_manager.dart 83            MigrationManager.migrateToLatest.<fn>
+2026-01-30 11:00:56.802104  | ERROR   | package:serverpod/src/database/migrations/migration_manager.dart 252           MigrationManager._withMigrationLock.<fn>
+2026-01-30 11:00:56.802107  | ERROR   | package:postgres/src/v3/connection.dart 554                                    PgConnectionImplementation.runTx.<fn>
+2026-01-30 11:00:56.802109  | ERROR   | package:pool/pool.dart 127                                                     Pool.withResource
+2026-01-30 11:00:56.802144  | ERROR   | package:postgres/src/pool/pool_impl.dart 153                                   PoolImplementation.withConnection
+2026-01-30 11:00:56.802148  | ERROR   | package:serverpod/src/database/database.dart 399                               Database.transaction
+2026-01-30 11:00:56.802152  | ERROR   | package:serverpod/src/database/migrations/migration_manager.dart 245           MigrationManager._withMigrationLock
+2026-01-30 11:00:56.802156  | ERROR   | package:serverpod/src/database/migrations/migration_manager.dart 70            MigrationManager.migrateToLatest
+2026-01-30 11:00:56.802160  | ERROR   | package:serverpod/src/server/serverpod.dart 798                                Serverpod._applyMigrations
+2026-01-30 11:00:56.802164  | ERROR   | package:serverpod/src/server/serverpod.dart 662                                Serverpod._unguardedStart
+2026-01-30 11:00:56.802168  | ERROR   | package:serverpod/src/server/serverpod.dart 625                                Serverpod.start.<fn>
+2026-01-30 11:00:56.802171  | ERROR   | package:serverpod/src/server/serverpod.dart 624                                Serverpod.start
+2026-01-30 11:00:56.802175  | ERROR   | package:serverpod_flutter_butler_server/server.dart 84                         run
+2026-01-30 11:00:56.802179  | ERROR   | {}
+2026-01-30 11:00:57.050047  | INFO    | 2026-01-30 10:00:57.049836Z WebServer  INFO: Webserver listening on http://stilvang.serverpod.space:8082
+2026-01-30 11:00:57.052434  | ERROR   | WARNING: CPU and memory usage metrics are not supported on this platform.
+2026-01-30 11:07:40.621090  | INFO    | SERVERPOD version: 3.2.3, dart: 3.8.3 (stable) (Thu Jul 31 08:37:15 2025 -0700) on "linux_x64", time: 2026-01-30 10:07:40.620065Z
+2026-01-30 11:07:40.623869  | INFO    | runMode: production
+2026-01-30 11:07:40.623888  | INFO    | serverId: stilvang-6b9b794b85-xvpw7
+2026-01-30 11:07:40.623893  | INFO    | role: monolith
+2026-01-30 11:07:40.623897  | INFO    | loggingMode: normal
+2026-01-30 11:07:40.623901  | INFO    | applyMigrations: true
+2026-01-30 11:07:40.623906  | INFO    | applyRepairMigration: false
+2026-01-30 11:07:40.625431  | INFO    | SERVERPOD initialized, time: 2026-01-30 10:07:40.625352Z
+2026-01-30 11:07:40.932527  | INFO    | SIGTERM (15) received, time: 2026-01-30 10:07:40.932308Z
+2026-01-30 11:07:40.932597  | INFO    | SERVERPOD initiating shutdown, time: 2026-01-30 10:07:40.932388Z
+2026-01-30 11:07:40.933674  | INFO    | SERVERPOD shutdown completed, time: 2026-01-30 10:07:40.933534Z
+2026-01-30 11:07:41.385169  | ERROR   | Invalid serviceSecret in password file, Insights server disabled.Failed to apply migration 20260128220755898.
+2026-01-30 11:07:41.385190  | ERROR   | DatabaseQueryException: { message: relation "serverpod_cloud_storage" already exists, code: 42P07 }
+2026-01-30 11:07:41.392937  | ERROR   | 2026-01-30 10:07:41.392750Z ERROR: Failed to apply database migrations.
+2026-01-30 11:07:41.392961  | ERROR   | 2026-01-30 10:07:41.392750Z ERROR: DatabaseQueryException: { message: relation "serverpod_cloud_storage" already exists, code: 42P07 }
+2026-01-30 11:07:41.399356  | ERROR   | package:postgres/src/v3/connection.dart 862                                    _PgResultStreamSubscription.handleError
+2026-01-30 11:07:41.399375  | ERROR   | package:postgres/src/v3/connection.dart 494                                    PgConnectionImplementation._handleMessage
+2026-01-30 11:07:41.399380  | ERROR   | dart:async/zone.dart 1538                                                      _rootRunUnary
+2026-01-30 11:07:41.399384  | ERROR   | dart:async/zone.dart 1429                                                      _CustomZone.runUnary
+2026-01-30 11:07:41.399388  | ERROR   | dart:async/zone.dart 1329                                                      _CustomZone.runUnaryGuarded
+2026-01-30 11:07:41.399392  | ERROR   | dart:async/stream_impl.dart 381                                                _BufferingStreamSubscription._sendData
+2026-01-30 11:07:41.399396  | ERROR   | dart:async/stream_impl.dart 312                                                _BufferingStreamSubscription._add
+2026-01-30 11:07:41.399400  | ERROR   | dart:async/stream_controller.dart 798                                          _SyncStreamControllerDispatch._sendData
+2026-01-30 11:07:41.399404  | ERROR   | dart:async/stream_controller.dart 663                                          _StreamController._add
+2026-01-30 11:07:41.399408  | ERROR   | dart:async/stream_controller.dart 618                                          _StreamController.add
+2026-01-30 11:07:41.399412  | ERROR   | dart:async/stream.dart 823                                                     Stream.asyncMap.<fn>.add
+2026-01-30 11:07:41.399416  | ERROR   | dart:async/zone.dart 1538                                                      _rootRunUnary
+2026-01-30 11:07:41.399420  | ERROR   | dart:async/stream_impl.dart 215                                                _BufferingStreamSubscription.resume
+2026-01-30 11:07:41.399424  | ERROR   | ===== asynchronous gap ===========================
+2026-01-30 11:07:41.399429  | ERROR   | package:postgres/src/v3/connection.dart 803                                    new _PgResultStreamSubscription.simpleQueryProtocol
+2026-01-30 11:07:41.399433  | ERROR   | package:postgres/src/v3/connection.dart 153                                    _PgSessionBase.execute
+2026-01-30 11:07:41.399437  | ERROR   | package:postgres/src/pool/pool_impl.dart 298                                   _PoolConnection.execute
+2026-01-30 11:07:41.399441  | ERROR   | package:postgres/src/pool/pool_impl.dart 63                                    PoolImplementation.execute.<fn>
+2026-01-30 11:07:41.399445  | ERROR   | package:postgres/src/pool/pool_impl.dart 153                                   PoolImplementation.withConnection
+2026-01-30 11:07:41.399449  | ERROR   | package:serverpod/src/database/adapters/postgres/database_connection.dart 527  DatabaseConnection._query
+2026-01-30 11:07:41.399466  | ERROR   | package:serverpod/src/database/adapters/postgres/database_connection.dart 607  DatabaseConnection.simpleExecute
+2026-01-30 11:07:41.399469  | ERROR   | package:serverpod/src/database/migrations/migration_manager.dart 182           MigrationManager._migrateToLatestModule
+2026-01-30 11:07:41.399472  | ERROR   | package:serverpod/src/database/migrations/migration_manager.dart 83            MigrationManager.migrateToLatest.<fn>
+2026-01-30 11:07:41.399509  | ERROR   | package:serverpod/src/database/migrations/migration_manager.dart 252           MigrationManager._withMigrationLock.<fn>
+2026-01-30 11:07:41.399512  | ERROR   | package:postgres/src/v3/connection.dart 554                                    PgConnectionImplementation.runTx.<fn>
+2026-01-30 11:07:41.399515  | ERROR   | package:pool/pool.dart 127                                                     Pool.withResource
+2026-01-30 11:07:41.399518  | ERROR   | package:postgres/src/pool/pool_impl.dart 153                                   PoolImplementation.withConnection
+2026-01-30 11:07:41.399520  | ERROR   | package:serverpod/src/database/database.dart 399                               Database.transaction
+2026-01-30 11:07:41.399523  | ERROR   | package:serverpod/src/database/migrations/migration_manager.dart 245           MigrationManager._withMigrationLock
+2026-01-30 11:07:41.399525  | ERROR   | package:serverpod/src/database/migrations/migration_manager.dart 70            MigrationManager.migrateToLatest
+2026-01-30 11:07:41.399528  | ERROR   | package:serverpod/src/server/serverpod.dart 798                                Serverpod._applyMigrations
+2026-01-30 11:07:41.399530  | ERROR   | package:serverpod/src/server/serverpod.dart 662                                Serverpod._unguardedStart
+2026-01-30 11:07:41.399533  | ERROR   | package:serverpod/src/server/serverpod.dart 625                                Serverpod.start.<fn>
+2026-01-30 11:07:41.399535  | ERROR   | package:serverpod/src/server/serverpod.dart 624                                Serverpod.start
+2026-01-30 11:07:41.399538  | ERROR   | package:serverpod_flutter_butler_server/server.dart 84                         run
+2026-01-30 11:07:41.399540  | ERROR   | {}
+2026-01-30 11:07:41.655516  | INFO    | 2026-01-30 10:07:41.655259Z WebServer  INFO: Webserver listening on http://stilvang.serverpod.space:8082
+2026-01-30 11:07:41.657556  | ERROR   | WARNING: CPU and memory usage metrics are not supported on this platform.
+2026-01-30 11:10:38.115711  | INFO    | {"__className__":"serverpod.SessionLogEntry","touched":"2026-01-30T10:10:38.123709Z","endpoint":"analytics","method":"getDailyStats","isOpen":true,"id":928589831,"serverId":"default"}
+2026-01-30 11:10:38.115711  | ERROR   | {"endpoint":"analytics","method":"getDailyStats","touched":"2026-01-30T10:10:38.123944Z","error":"DatabaseQueryException: { message: Table not found, have you applied the database migration? (relation \"task\" does not exist), code: 42P01, position: 288 }","__className__":"serverpod.SessionLogEntry","serverId":"default","duration":0.008231,"id":928589831,"stackTrace":"#0      _PgSessionBase._sendAndWaitForQuery (package:postgres/src/v3/connection.dart:87)\n#1      _PgSessionBase._prepare (package:postgres/src/v3/connection.dart:195)\n#2      _PgSessionBase.execute (package:postgres/src/v3/connection.dart:171)\n#3      _PoolConnection.execute (package:postgres/src/pool/pool_impl.dart:298)\n#4      PoolImplementation.execute.<anonymous closure> (package:postgres/src/pool/pool_impl.dart:63)\n#5      PoolImplementation.withConnection (package:postgres/src/pool/pool_impl.dart:153)\n<asynchronous suspension>\n#6      DatabaseConnection._query (package:serverpod/src/database/adapters/postgres/database_connection.dart:527)\n<asynchronous suspension>\n#7      DatabaseConnection._mappedResultsQuery (package:serverpod/src/database/adapters/postgres/database_connection.dart:626)\n<asynchronous suspension>\n#8      DatabaseConnection._deserializedMappedQuery (package:serverpod/src/database/adapters/postgres/database_connection.dart:659)\n<asynchronous suspension>\n#9      AnalyticsEndpoint.getDailyStats (package:serverpod_flutter_butler_server/src/endpoints/analytics_endpoint.dart:10)\n<asynchronous suspension>\n#10     Server._handleEndpointCall (package:serverpod/src/server/server.dart:444)\n<asynchronous suspension>\n#11     Server._endpoints (package:serverpod/src/server/server.dart:311)\n<asynchronous suspension>\n#12     Server._reportException.<anonymous closure> (package:serverpod/src/server/server.dart:205)\n<asynchronous suspension>\n#13     Server._headers.<anonymous closure> (package:serverpod/src/server/server.dart:286)\n<asynchronous suspension>\n#14     _RoutingMiddlewareBuilder.call.<anonymous closure> (package:relic/src/middleware/routing_middleware.dart:121)\n<asynchronous suspension>\n#15     _RelicServer._wrapHandlerWithMiddleware.<anonymous closure> (package:relic/src/relic_server.dart:151)\n<asynchronous suspension>\n#16     _RelicServer._handleRequest (package:relic/src/relic_server.dart:127)\n<asynchronous suspension>\n","numQueries":1,"slow":false,"isOpen":false}
+2026-01-30 11:10:38.128044  | ERROR   | {"slow":false,"error":"DatabaseQueryException: { message: Table not found, have you applied the database migration? (relation \"task\" does not exist), code: 42P01, position: 288 }","order":1,"serverId":"default","stackTrace":"#0      _PgSessionBase._sendAndWaitForQuery (package:postgres/src/v3/connection.dart:87)\n#1      _PgSessionBase._prepare (package:postgres/src/v3/connection.dart:195)\n#2      _PgSessionBase.execute (package:postgres/src/v3/connection.dart:171)\n#3      _PoolConnection.execute (package:postgres/src/pool/pool_impl.dart:298)\n#4      PoolImplementation.execute.<anonymous closure> (package:postgres/src/pool/pool_impl.dart:63)\n#5      PoolImplementation.withConnection (package:postgres/src/pool/pool_impl.dart:153)\n<asynchronous suspension>\n#6      DatabaseConnection._query (package:serverpod/src/database/adapters/postgres/database_connection.dart:527)\n<asynchronous suspension>\n#7      DatabaseConnection._mappedResultsQuery (package:serverpod/src/database/adapters/postgres/database_connection.dart:626)\n<asynchronous suspension>\n#8      DatabaseConnection._deserializedMappedQuery (package:serverpod/src/database/adapters/postgres/database_connection.dart:659)\n<asynchronous suspension>\n#9      AnalyticsEndpoint.getDailyStats (package:serverpod_flutter_butler_server/src/endpoints/analytics_endpoint.dart:10)\n<asynchronous suspension>\n#10     Server._handleEndpointCall (package:serverpod/src/server/server.dart:444)\n<asynchronous suspension>\n#11     Server._endpoints (package:serverpod/src/server/server.dart:311)\n<asynchronous suspension>\n#12     Server._reportException.<anonymous closure> (package:serverpod/src/server/server.dart:205)\n<asynchronous suspension>\n#13     Server._headers.<anonymous closure> (package:serverpod/src/server/server.dart:286)\n<asynchronous suspension>\n#14     _RoutingMiddlewareBuilder.call.<anonymous closure> (package:relic/src/middleware/routing_middleware.dart:121)\n<asynchronous suspension>\n#15     _RelicServer._wrapHandlerWithMiddleware.<anonymous closure> (package:relic/src/relic_server.dart:151)\n<asynchronous suspension>\n#16     _RelicServer._handleRequest (package:relic/src/relic_server.dart:127)\n<asynchronous suspension>\n","duration":0.0072,"query":"SELECT \"task\".\"id\" AS \"task.id\", \"task\".\"title\" AS \"task.title\", \"task\".\"description\" AS \"task.description\", \"task\".\"isCompleted\" AS \"task.isCompleted\", \"task\".\"parentTaskId\" AS \"task.parentTaskId\", \"task\".\"createdAt\" AS \"task.createdAt\", \"task\".\"completedAt\" AS \"task.completedAt\" FROM \"task\" WHERE \"task\".\"isCompleted\" = true","__className__":"serverpod.QueryLogEntry","sessionLogId":928589831}
+2026-01-30 11:10:38.129594  | ERROR   | 2026-01-30 10:10:38.124650Z ERROR: Internal server error. Request handler failed with exception.
+2026-01-30 11:10:38.129601  | ERROR   | 2026-01-30 10:10:38.124650Z ERROR: DatabaseQueryException: { message: Table not found, have you applied the database migration? (relation "task" does not exist), code: 42P01, position: 288 }
+2026-01-30 11:10:38.129618  | ERROR   | #0      _PgSessionBase._sendAndWaitForQuery (package:postgres/src/v3/connection.dart:87)
+2026-01-30 11:10:38.129623  | ERROR   | #1      _PgSessionBase._prepare (package:postgres/src/v3/connection.dart:195)
+2026-01-30 11:10:38.129628  | ERROR   | #2      _PgSessionBase.execute (package:postgres/src/v3/connection.dart:171)
+2026-01-30 11:10:38.129632  | ERROR   | #3      _PoolConnection.execute (package:postgres/src/pool/pool_impl.dart:298)
+2026-01-30 11:10:38.129637  | ERROR   | #4      PoolImplementation.execute.<anonymous closure> (package:postgres/src/pool/pool_impl.dart:63)
+2026-01-30 11:10:38.129641  | ERROR   | #5      PoolImplementation.withConnection (package:postgres/src/pool/pool_impl.dart:153)
+2026-01-30 11:10:38.129646  | ERROR   | <asynchronous suspension>
+2026-01-30 11:10:38.129650  | ERROR   | #6      DatabaseConnection._query (package:serverpod/src/database/adapters/postgres/database_connection.dart:527)
+2026-01-30 11:10:38.129655  | ERROR   | <asynchronous suspension>
+2026-01-30 11:10:38.129659  | ERROR   | #7      DatabaseConnection._mappedResultsQuery (package:serverpod/src/database/adapters/postgres/database_connection.dart:626)
+2026-01-30 11:10:38.129663  | ERROR   | <asynchronous suspension>
+2026-01-30 11:10:38.129669  | ERROR   | #8      DatabaseConnection._deserializedMappedQuery (package:serverpod/src/database/adapters/postgres/database_connection.dart:659)
+2026-01-30 11:10:38.129673  | ERROR   | <asynchronous suspension>
+2026-01-30 11:10:38.129677  | ERROR   | #9      AnalyticsEndpoint.getDailyStats (package:serverpod_flutter_butler_server/src/endpoints/analytics_endpoint.dart:10)
+2026-01-30 11:10:38.129682  | ERROR   | <asynchronous suspension>
+2026-01-30 11:10:38.129686  | ERROR   | #10     Server._handleEndpointCall (package:serverpod/src/server/server.dart:444)
+2026-01-30 11:10:38.129691  | ERROR   | <asynchronous suspension>
+2026-01-30 11:10:38.129696  | ERROR   | #11     Server._endpoints (package:serverpod/src/server/server.dart:311)
+2026-01-30 11:10:38.129700  | ERROR   | <asynchronous suspension>
+2026-01-30 11:10:38.129715  | ERROR   | #12     Server._reportException.<anonymous closure> (package:serverpod/src/server/server.dart:205)
+2026-01-30 11:10:38.129719  | ERROR   | <asynchronous suspension>
+2026-01-30 11:10:38.129723  | ERROR   | #13     Server._headers.<anonymous closure> (package:serverpod/src/server/server.dart:286)
+2026-01-30 11:10:38.129745  | ERROR   | <asynchronous suspension>
+2026-01-30 11:10:38.129752  | ERROR   | #14     _RoutingMiddlewareBuilder.call.<anonymous closure> (package:relic/src/middleware/routing_middleware.dart:121)
+2026-01-30 11:10:38.129756  | ERROR   | <asynchronous suspension>
+2026-01-30 11:10:38.129760  | ERROR   | #15     _RelicServer._wrapHandlerWithMiddleware.<anonymous closure> (package:relic/src/relic_server.dart:151)
+2026-01-30 11:10:38.129765  | ERROR   | <asynchronous suspension>
+2026-01-30 11:10:38.129769  | ERROR   | #16     _RelicServer._handleRequest (package:relic/src/relic_server.dart:127)
+2026-01-30 11:10:38.129774  | ERROR   | <asynchronous suspension>
+2026-01-30 11:10:38.129778  | ERROR   | {}
+2026-01-30 11:10:42.661225  | INFO    | {"serverId":"default","method":"getDailyStats","touched":"2026-01-30T10:10:42.667075Z","id":933403704,"isOpen":true,"__className__":"serverpod.SessionLogEntry","endpoint":"analytics"}
+2026-01-30 11:10:42.661225  | ERROR   | {"__className__":"serverpod.SessionLogEntry","stackTrace":"#0      _PgSessionBase._sendAndWaitForQuery (package:postgres/src/v3/connection.dart:87)\n#1      _PgSessionBase._prepare (package:postgres/src/v3/connection.dart:195)\n#2      _PgSessionBase.execute (package:postgres/src/v3/connection.dart:171)\n#3      _PoolConnection.execute (package:postgres/src/pool/pool_impl.dart:298)\n#4      PoolImplementation.execute.<anonymous closure> (package:postgres/src/pool/pool_impl.dart:63)\n#5      PoolImplementation.withConnection (package:postgres/src/pool/pool_impl.dart:153)\n<asynchronous suspension>\n#6      DatabaseConnection._query (package:serverpod/src/database/adapters/postgres/database_connection.dart:527)\n<asynchronous suspension>\n#7      DatabaseConnection._mappedResultsQuery (package:serverpod/src/database/adapters/postgres/database_connection.dart:626)\n<asynchronous suspension>\n#8      DatabaseConnection._deserializedMappedQuery (package:serverpod/src/database/adapters/postgres/database_connection.dart:659)\n<asynchronous suspension>\n#9      AnalyticsEndpoint.getDailyStats (package:serverpod_flutter_butler_server/src/endpoints/analytics_endpoint.dart:10)\n<asynchronous suspension>\n#10     Server._handleEndpointCall (package:serverpod/src/server/server.dart:444)\n<asynchronous suspension>\n#11     Server._endpoints (package:serverpod/src/server/server.dart:311)\n<asynchronous suspension>\n#12     Server._reportException.<anonymous closure> (package:serverpod/src/server/server.dart:205)\n<asynchronous suspension>\n#13     Server._headers.<anonymous closure> (package:serverpod/src/server/server.dart:286)\n<asynchronous suspension>\n#14     _RoutingMiddlewareBuilder.call.<anonymous closure> (package:relic/src/middleware/routing_middleware.dart:121)\n<asynchronous suspension>\n#15     _RelicServer._wrapHandlerWithMiddleware.<anonymous closure> (package:relic/src/relic_server.dart:151)\n<asynchronous suspension>\n#16     _RelicServer._handleRequest (package:relic/src/relic_server.dart:127)\n<asynchronous suspension>\n","method":"getDailyStats","touched":"2026-01-30T10:10:42.667151Z","slow":false,"id":933403704,"error":"DatabaseQueryException: { message: Table not found, have you applied the database migration? (relation \"task\" does not exist), code: 42P01, position: 288 }","serverId":"default","endpoint":"analytics","duration":0.005925,"isOpen":false,"numQueries":1}
+2026-01-30 11:10:42.667539  | ERROR   | {"duration":0.005634,"query":"SELECT \"task\".\"id\" AS \"task.id\", \"task\".\"title\" AS \"task.title\", \"task\".\"description\" AS \"task.description\", \"task\".\"isCompleted\" AS \"task.isCompleted\", \"task\".\"parentTaskId\" AS \"task.parentTaskId\", \"task\".\"createdAt\" AS \"task.createdAt\", \"task\".\"completedAt\" AS \"task.completedAt\" FROM \"task\" WHERE \"task\".\"isCompleted\" = true","serverId":"default","error":"DatabaseQueryException: { message: Table not found, have you applied the database migration? (relation \"task\" does not exist), code: 42P01, position: 288 }","stackTrace":"#0      _PgSessionBase._sendAndWaitForQuery (package:postgres/src/v3/connection.dart:87)\n#1      _PgSessionBase._prepare (package:postgres/src/v3/connection.dart:195)\n#2      _PgSessionBase.execute (package:postgres/src/v3/connection.dart:171)\n#3      _PoolConnection.execute (package:postgres/src/pool/pool_impl.dart:298)\n#4      PoolImplementation.execute.<anonymous closure> (package:postgres/src/pool/pool_impl.dart:63)\n#5      PoolImplementation.withConnection (package:postgres/src/pool/pool_impl.dart:153)\n<asynchronous suspension>\n#6      DatabaseConnection._query (package:serverpod/src/database/adapters/postgres/database_connection.dart:527)\n<asynchronous suspension>\n#7      DatabaseConnection._mappedResultsQuery (package:serverpod/src/database/adapters/postgres/database_connection.dart:626)\n<asynchronous suspension>\n#8      DatabaseConnection._deserializedMappedQuery (package:serverpod/src/database/adapters/postgres/database_connection.dart:659)\n<asynchronous suspension>\n#9      AnalyticsEndpoint.getDailyStats (package:serverpod_flutter_butler_server/src/endpoints/analytics_endpoint.dart:10)\n<asynchronous suspension>\n#10     Server._handleEndpointCall (package:serverpod/src/server/server.dart:444)\n<asynchronous suspension>\n#11     Server._endpoints (package:serverpod/src/server/server.dart:311)\n<asynchronous suspension>\n#12     Server._reportException.<anonymous closure> (package:serverpod/src/server/server.dart:205)\n<asynchronous suspension>\n#13     Server._headers.<anonymous closure> (package:serverpod/src/server/server.dart:286)\n<asynchronous suspension>\n#14     _RoutingMiddlewareBuilder.call.<anonymous closure> (package:relic/src/middleware/routing_middleware.dart:121)\n<asynchronous suspension>\n#15     _RelicServer._wrapHandlerWithMiddleware.<anonymous closure> (package:relic/src/relic_server.dart:151)\n<asynchronous suspension>\n#16     _RelicServer._handleRequest (package:relic/src/relic_server.dart:127)\n<asynchronous suspension>\n","slow":false,"__className__":"serverpod.QueryLogEntry","sessionLogId":933403704,"order":1}
+2026-01-30 11:10:42.667591  | ERROR   | 2026-01-30 10:10:42.667562Z ERROR: Internal server error. Request handler failed with exception.
+2026-01-30 11:10:42.667702  | ERROR   | 2026-01-30 10:10:42.667562Z ERROR: DatabaseQueryException: { message: Table not found, have you applied the database migration? (relation "task" does not exist), code: 42P01, position: 288 }
+2026-01-30 11:10:42.667765  | ERROR   | #0      _PgSessionBase._sendAndWaitForQuery (package:postgres/src/v3/connection.dart:87)
+2026-01-30 11:10:42.667778  | ERROR   | #1      _PgSessionBase._prepare (package:postgres/src/v3/connection.dart:195)
+2026-01-30 11:10:42.667782  | ERROR   | #2      _PgSessionBase.execute (package:postgres/src/v3/connection.dart:171)
+2026-01-30 11:10:42.667796  | ERROR   | #3      _PoolConnection.execute (package:postgres/src/pool/pool_impl.dart:298)
+2026-01-30 11:10:42.667800  | ERROR   | #4      PoolImplementation.execute.<anonymous closure> (package:postgres/src/pool/pool_impl.dart:63)
+2026-01-30 11:10:42.667803  | ERROR   | #5      PoolImplementation.withConnection (package:postgres/src/pool/pool_impl.dart:153)
+2026-01-30 11:10:42.667807  | ERROR   | <asynchronous suspension>
+2026-01-30 11:10:42.667812  | ERROR   | #6      DatabaseConnection._query (package:serverpod/src/database/adapters/postgres/database_connection.dart:527)
+2026-01-30 11:10:42.667815  | ERROR   | <asynchronous suspension>
+2026-01-30 11:10:42.667818  | ERROR   | #7      DatabaseConnection._mappedResultsQuery (package:serverpod/src/database/adapters/postgres/database_connection.dart:626)
+2026-01-30 11:10:42.667822  | ERROR   | <asynchronous suspension>
+2026-01-30 11:10:42.667826  | ERROR   | #8      DatabaseConnection._deserializedMappedQuery (package:serverpod/src/database/adapters/postgres/database_connection.dart:659)
+2026-01-30 11:10:42.667829  | ERROR   | <asynchronous suspension>
+2026-01-30 11:10:42.667832  | ERROR   | #9      AnalyticsEndpoint.getDailyStats (package:serverpod_flutter_butler_server/src/endpoints/analytics_endpoint.dart:10)
+2026-01-30 11:10:42.667835  | ERROR   | <asynchronous suspension>
+2026-01-30 11:10:42.667838  | ERROR   | #10     Server._handleEndpointCall (package:serverpod/src/server/server.dart:444)
+2026-01-30 11:10:42.667841  | ERROR   | <asynchronous suspension>
+2026-01-30 11:10:42.667844  | ERROR   | #11     Server._endpoints (package:serverpod/src/server/server.dart:311)
+2026-01-30 11:10:42.667847  | ERROR   | <asynchronous suspension>
+2026-01-30 11:10:42.667851  | ERROR   | #12     Server._reportException.<anonymous closure> (package:serverpod/src/server/server.dart:205)
+2026-01-30 11:10:42.667854  | ERROR   | <asynchronous suspension>
+2026-01-30 11:10:42.667857  | ERROR   | #13     Server._headers.<anonymous closure> (package:serverpod/src/server/server.dart:286)
+2026-01-30 11:10:42.667860  | ERROR   | <asynchronous suspension>
+2026-01-30 11:10:42.667863  | ERROR   | #14     _RoutingMiddlewareBuilder.call.<anonymous closure> (package:relic/src/middleware/routing_middleware.dart:121)
+2026-01-30 11:10:42.667867  | ERROR   | <asynchronous suspension>
+2026-01-30 11:10:42.667869  | ERROR   | #15     _RelicServer._wrapHandlerWithMiddleware.<anonymous closure> (package:relic/src/relic_server.dart:151)
+2026-01-30 11:10:42.667872  | ERROR   | <asynchronous suspension>
+2026-01-30 11:10:42.667875  | ERROR   | #16     _RelicServer._handleRequest (package:relic/src/relic_server.dart:127)
+2026-01-30 11:10:42.667895  | ERROR   | <asynchronous suspension>
+2026-01-30 11:10:42.667898  | ERROR   | {}
+2026-01-30 11:17:56.553597  | INFO    | SERVERPOD version: 3.2.3, dart: 3.8.3 (stable) (Thu Jul 31 08:37:15 2025 -0700) on "linux_x64", time: 2026-01-30 10:17:56.553259Z
+2026-01-30 11:17:56.555506  | INFO    | runMode: production
+2026-01-30 11:17:56.555524  | INFO    | serverId: stilvang-79bc86b8d-j4grq
+2026-01-30 11:17:56.555528  | INFO    | role: monolith
+2026-01-30 11:17:56.555531  | INFO    | loggingMode: normal
+2026-01-30 11:17:56.555535  | INFO    | applyMigrations: true
+2026-01-30 11:17:56.555539  | INFO    | applyRepairMigration: false
+2026-01-30 11:17:56.556157  | INFO    | SERVERPOD initialized, time: 2026-01-30 10:17:56.555998Z
+2026-01-30 11:17:57.022246  | INFO    | SIGTERM (15) received, time: 2026-01-30 10:17:57.022033Z
+2026-01-30 11:17:57.022302  | INFO    | SERVERPOD initiating shutdown, time: 2026-01-30 10:17:57.022132Z
+2026-01-30 11:17:57.023308  | INFO    | SERVERPOD shutdown completed, time: 2026-01-30 10:17:57.023138Z
+2026-01-30 11:17:57.278054  | ERROR   | Invalid serviceSecret in password file, Insights server disabled.Failed to apply migration 20260128220755898.
+2026-01-30 11:17:57.278092  | ERROR   | DatabaseQueryException: { message: relation "serverpod_cloud_storage" already exists, code: 42P07 }
+2026-01-30 11:17:57.287398  | ERROR   | 2026-01-30 10:17:57.287188Z ERROR: Failed to apply database migrations.
+2026-01-30 11:17:57.287425  | ERROR   | 2026-01-30 10:17:57.287188Z ERROR: DatabaseQueryException: { message: relation "serverpod_cloud_storage" already exists, code: 42P07 }
+2026-01-30 11:17:57.291411  | ERROR   | package:postgres/src/v3/connection.dart 862                                    _PgResultStreamSubscription.handleError
+2026-01-30 11:17:57.291434  | ERROR   | package:postgres/src/v3/connection.dart 494                                    PgConnectionImplementation._handleMessage
+2026-01-30 11:17:57.291439  | ERROR   | dart:async/zone.dart 1538                                                      _rootRunUnary
+2026-01-30 11:17:57.291442  | ERROR   | dart:async/zone.dart 1429                                                      _CustomZone.runUnary
+2026-01-30 11:17:57.291444  | ERROR   | dart:async/zone.dart 1329                                                      _CustomZone.runUnaryGuarded
+2026-01-30 11:17:57.291447  | ERROR   | dart:async/stream_impl.dart 381                                                _BufferingStreamSubscription._sendData
+2026-01-30 11:17:57.291450  | ERROR   | dart:async/stream_impl.dart 312                                                _BufferingStreamSubscription._add
+2026-01-30 11:17:57.291452  | ERROR   | dart:async/stream_controller.dart 798                                          _SyncStreamControllerDispatch._sendData
+2026-01-30 11:17:57.291454  | ERROR   | dart:async/stream_controller.dart 663                                          _StreamController._add
+2026-01-30 11:17:57.291456  | ERROR   | dart:async/stream_controller.dart 618                                          _StreamController.add
+2026-01-30 11:17:57.291460  | ERROR   | dart:async/stream.dart 823                                                     Stream.asyncMap.<fn>.add
+2026-01-30 11:17:57.291463  | ERROR   | dart:async/zone.dart 1538                                                      _rootRunUnary
+2026-01-30 11:17:57.291466  | ERROR   | dart:async/stream_impl.dart 215                                                _BufferingStreamSubscription.resume
+2026-01-30 11:17:57.291470  | ERROR   | ===== asynchronous gap ===========================
+2026-01-30 11:17:57.291475  | ERROR   | package:postgres/src/v3/connection.dart 803                                    new _PgResultStreamSubscription.simpleQueryProtocol
+2026-01-30 11:17:57.291479  | ERROR   | package:postgres/src/v3/connection.dart 153                                    _PgSessionBase.execute
+2026-01-30 11:17:57.291482  | ERROR   | package:postgres/src/pool/pool_impl.dart 298                                   _PoolConnection.execute
+2026-01-30 11:17:57.291486  | ERROR   | package:postgres/src/pool/pool_impl.dart 63                                    PoolImplementation.execute.<fn>
+2026-01-30 11:17:57.291489  | ERROR   | package:postgres/src/pool/pool_impl.dart 153                                   PoolImplementation.withConnection
+2026-01-30 11:17:57.291492  | ERROR   | package:serverpod/src/database/adapters/postgres/database_connection.dart 527  DatabaseConnection._query
+2026-01-30 11:17:57.291511  | ERROR   | package:serverpod/src/database/adapters/postgres/database_connection.dart 607  DatabaseConnection.simpleExecute
+2026-01-30 11:17:57.291515  | ERROR   | package:serverpod/src/database/migrations/migration_manager.dart 182           MigrationManager._migrateToLatestModule
+2026-01-30 11:17:57.291518  | ERROR   | package:serverpod/src/database/migrations/migration_manager.dart 83            MigrationManager.migrateToLatest.<fn>
+2026-01-30 11:17:57.291521  | ERROR   | package:serverpod/src/database/migrations/migration_manager.dart 252           MigrationManager._withMigrationLock.<fn>
+2026-01-30 11:17:57.291524  | ERROR   | package:postgres/src/v3/connection.dart 554                                    PgConnectionImplementation.runTx.<fn>
+2026-01-30 11:17:57.291526  | ERROR   | package:pool/pool.dart 127                                                     Pool.withResource
+2026-01-30 11:17:57.291528  | ERROR   | package:postgres/src/pool/pool_impl.dart 153                                   PoolImplementation.withConnection
+2026-01-30 11:17:57.291530  | ERROR   | package:serverpod/src/database/database.dart 399                               Database.transaction
+2026-01-30 11:17:57.291533  | ERROR   | package:serverpod/src/database/migrations/migration_manager.dart 245           MigrationManager._withMigrationLock
+2026-01-30 11:17:57.291535  | ERROR   | package:serverpod/src/database/migrations/migration_manager.dart 70            MigrationManager.migrateToLatest
+2026-01-30 11:17:57.291537  | ERROR   | package:serverpod/src/server/serverpod.dart 798                                Serverpod._applyMigrations
+2026-01-30 11:17:57.291539  | ERROR   | package:serverpod/src/server/serverpod.dart 662                                Serverpod._unguardedStart
+2026-01-30 11:17:57.291541  | ERROR   | package:serverpod/src/server/serverpod.dart 625                                Serverpod.start.<fn>
+2026-01-30 11:17:57.291543  | ERROR   | package:serverpod/src/server/serverpod.dart 624                                Serverpod.start
+2026-01-30 11:17:57.291545  | ERROR   | package:serverpod_flutter_butler_server/server.dart 84                         run
+2026-01-30 11:17:57.291547  | ERROR   | {}
+2026-01-30 11:17:57.537863  | INFO    | 2026-01-30 10:17:57.537636Z WebServer  INFO: Webserver listening on http://stilvang.serverpod.space:8082
+2026-01-30 11:17:57.539458  | ERROR   | WARNING: CPU and memory usage metrics are not supported on this platform.
+-- End of log stream -- 264 records (limit 1000) --
