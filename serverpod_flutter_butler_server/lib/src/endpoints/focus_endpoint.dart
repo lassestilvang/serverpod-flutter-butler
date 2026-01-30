@@ -4,6 +4,16 @@ import '../generated/protocol.dart';
 class FocusEndpoint extends Endpoint {
   /// Starts a Deep Work session for the given duration (in minutes).
   Future<FocusSession> startSession(Session session, int durationMinutes, {int? taskId}) async {
+    // 0. Check for existing active session to prevent race conditions
+    final existingSession = await FocusSession.db.findFirstRow(
+      session,
+      where: (t) => t.isActive.equals(true),
+    );
+
+    if (existingSession != null) {
+      throw Exception('A focus session is already active. Please stop it before starting a new one.');
+    }
+
     final startTime = DateTime.now();
     final plannedEndTime = startTime.add(Duration(minutes: durationMinutes));
 

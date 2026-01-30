@@ -35,21 +35,37 @@ class TasksEndpoint extends Endpoint {
 
   /// Breaks down a complex task into subtasks using Gemini AI.
   Future<List<String>> breakdownTask(Session session, String description) async {
-    final apiKey = session.serverpod.getPassword('geminiApiKey');
-    if (apiKey == null) {
-      throw Exception('Gemini API Key not found in server passwords.');
+    try {
+      final apiKey = session.serverpod.getPassword('geminiApiKey');
+      if (apiKey == null) {
+        session.log('Gemini API Key missing', level: LogLevel.warning);
+        return [];
+      }
+      
+      final service = GeminiService(apiKey);
+      return await service.breakDownTask(session, description);
+    } catch (e, stackTrace) {
+      session.log(
+        'Error breaking down task',
+        level: LogLevel.error,
+        exception: e,
+        stackTrace: stackTrace,
+      );
+      return [];
     }
-    
-    final service = GeminiService(apiKey);
-    return await service.breakDownTask(session, description);
   }
 
   Future<String> getButlerTip(Session session) async {
-    final apiKey = session.serverpod.getPassword('geminiApiKey');
-    if (apiKey == null) {
-      throw Exception('Gemini API Key not found');
+    try {
+      final apiKey = session.serverpod.getPassword('geminiApiKey');
+      if (apiKey == null) {
+        return 'The butler is at your service, sir. (API Config Missing)';
+      }
+      final service = GeminiService(apiKey);
+      return await service.getButlerTip(session);
+    } catch (e) {
+      session.log('Error getting butler tip: $e', level: LogLevel.error);
+      return 'Stay focused and consistent, sir.';
     }
-    final service = GeminiService(apiKey);
-    return await service.getButlerTip(session);
   }
 }

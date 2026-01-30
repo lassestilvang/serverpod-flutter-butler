@@ -4,6 +4,8 @@ import 'package:confetti/confetti.dart';
 import '../main.dart';
 import '../widgets/task_entry_widget.dart';
 import '../widgets/butler_app_bar.dart';
+import '../controllers/dashboard_controller.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DashboardScreen extends StatefulWidget {
   final Function(int)? onStartFocus;
@@ -15,96 +17,26 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   late ConfettiController _confettiController;
-  String? _butlerTip;
-  List<Task> _allTasks = [];
-  bool _isLoading = true;
+  final _controller = DashboardController();
 
   @override
   void didUpdateWidget(DashboardScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _silentRefresh();
+    _controller.silentRefresh();
   }
 
   @override
   void initState() {
     super.initState();
     _confettiController = ConfettiController(duration: const Duration(seconds: 2));
-    _loadAllData();
+    _controller.loadAllData();
   }
 
-  Future<void> _loadAllData() async {
-    setState(() => _isLoading = true);
-    try {
-      final tasks = await client.tasks.getAllTasks();
-      final tip = await client.tasks.getButlerTip();
-      if (mounted) {
-        setState(() {
-          _allTasks = tasks;
-          _butlerTip = tip;
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
-
-  Future<void> _silentRefresh() async {
-     try {
-      final tasks = await client.tasks.getAllTasks();
-      final tip = await client.tasks.getButlerTip();
-      if (mounted) {
-        setState(() {
-          _allTasks = tasks;
-          _butlerTip = tip;
-        });
-      }
-    } catch (e) { /* ignore */ }
-  }
-
-  void _refreshDashboard() {
-    _loadAllData();
-  }
-
-  String _getGreeting() {
-    final hour = DateTime.now().hour;
-    if (hour < 12) return 'Good morning, sir.';
-    if (hour < 17) return 'Good afternoon, sir.';
-    return 'Good evening, sir.';
-  }
-
-  Future<void> _markCompleted(Task task) async {
-    try {
-      if (mounted) {
-        setState(() {
-          // Optimistic: remove from active immediately
-          _allTasks.removeWhere((t) => t.id == task.id);
-        });
-        _confettiController.play();
-      }
-      task.isCompleted = true;
-      task.completedAt = DateTime.now();
-      await client.tasks.updateTask(task);
-      _silentRefresh(); // Sync final state (in case server added metadata)
-    } catch(e) {
-      if(mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Err: $e')));
-      _silentRefresh(); // Revert local state on error
-    }
-  }
-
-  Future<void> _deleteTask(Task task) async {
-     try {
-      if (mounted) {
-        setState(() {
-          _allTasks.removeWhere((t) => t.id == task.id || t.parentTaskId == task.id);
-        });
-      }
-      await client.tasks.deleteTask(task);
-      _silentRefresh(); // Final sync
-    } catch(e) {
-      if(mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Err: $e')));
-      _silentRefresh(); // Revert on error
-    }
+  @override
+  void dispose() {
+    _confettiController.dispose();
+    _controller.dispose();
+    super.dispose();
   }
 
   Future<void> _addSubtask(Task parent) async {
@@ -123,23 +55,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
             hintStyle: TextStyle(color: Colors.white54),
             enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white30)),
           ),
-          onSubmitted: (val) async {
-            if (val.isNotEmpty) {
-                final subtask = Task(
-                  title: val,
-                  isCompleted: false,
-                  parentTaskId: parent.id,
-                  createdAt: DateTime.now(),
-                );
-                final sub = await client.tasks.addTask(subtask);
-                if (mounted) {
-                  setState(() {
-                    _allTasks.add(sub);
-                  });
-                }
-                Navigator.of(context).pop();
-                _silentRefresh();
-            }
+          onSubmitted: (val) {
+             _controller.addTask(val, parentId: parent.id);
+             Navigator.of(context).pop();
           },
         ),
         actions: [
@@ -149,23 +67,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
           TextButton(
             child: const Text('Add', style: TextStyle(color: Colors.blueAccent)),
-            onPressed: () async {
-              if (titleController.text.isNotEmpty) {
-                final subtask = Task(
-                  title: titleController.text,
-                  isCompleted: false,
-                  parentTaskId: parent.id,
-                  createdAt: DateTime.now(),
-                );
-                final sub = await client.tasks.addTask(subtask);
-                if (mounted) {
-                  setState(() {
-                    _allTasks.add(sub);
-                  });
-                }
-                Navigator.of(context).pop();
-                _silentRefresh();
-              }
+            onPressed: () {
+              _controller.addTask(titleController.text, parentId: parent.id);
+              Navigator.of(context).pop();
             },
           ),
         ],
@@ -188,13 +92,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
             hintStyle: TextStyle(color: Colors.white54),
             enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white30)),
           ),
-          onSubmitted: (val) async {
-            task.title = val;
-            await client.tasks.updateTask(task);
-            if (mounted) {
-              Navigator.of(context).pop();
-              _refreshDashboard();
-            }
+          onSubmitted: (val) {
+             _controller.editTask(task, val);
+             Navigator.of(context).pop();
           },
         ),
         actions: [
@@ -204,11 +104,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
           TextButton(
             child: const Text('Save', style: TextStyle(color: Colors.blueAccent)),
-            onPressed: () async {
-              task.title = titleController.text;
-              await client.tasks.updateTask(task);
-              Navigator.of(context).pop();
-              _refreshDashboard();
+            onPressed: () {
+               _controller.editTask(task, titleController.text);
+               Navigator.of(context).pop();
             },
           ),
         ],
@@ -216,10 +114,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  @override
-  void dispose() {
-    _confettiController.dispose();
-    super.dispose();
+  String _getLocalizedGreeting(BuildContext context) {
+    final type = _controller.getGreetingType();
+    final l10n = AppLocalizations.of(context);
+    if (l10n == null) return 'HELLO, SIR';
+    
+    switch (type) {
+      case GreetingType.morning: return l10n.goodMorning;
+      case GreetingType.afternoon: return l10n.goodAfternoon;
+      case GreetingType.evening: return l10n.goodEvening;
+    }
   }
 
   @override
@@ -230,7 +134,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         title: 'AI Butler',
         actions: [
           IconButton(
-            onPressed: _refreshDashboard,
+            onPressed: _controller.loadAllData,
             icon: const Icon(Icons.refresh, color: Colors.white70),
           )
         ],
@@ -254,7 +158,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                    const SizedBox(height: 20),
                    Expanded(child: TaskEntryWidget(onTaskSaved: () {
                      Navigator.of(context).pop();
-                     _silentRefresh();
+                     _controller.silentRefresh();
                    })),
                 ],
               ),
@@ -285,13 +189,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
             shouldLoop: false,
             colors: const [Colors.blue, Colors.indigo, Colors.cyan],
           ),
-          Builder(
-            builder: (context) {
-              if (_isLoading) {
+          AnimatedBuilder(
+            animation: _controller,
+            builder: (context, _) {
+              if (_controller.isLoading && _controller.allTasks.isEmpty) {
                 return const Center(child: CircularProgressIndicator());
               }
 
-              final tasks = _allTasks ?? [];
+              if (_controller.error != null && _controller.allTasks.isEmpty) {
+                 return Center(child: Text('Error: ${_controller.error}', style: const TextStyle(color: Colors.red)));
+              }
+
+              final tasks = _controller.allTasks;
               final activeTasks = tasks.where((t) => !t.isCompleted).toList();
 
               // Grouping Logic
@@ -331,7 +240,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               }
 
               return ListView(
-                padding: const EdgeInsets.fromLTRB(24, 120, 24, 100),
+                padding: EdgeInsets.fromLTRB(24, MediaQuery.of(context).padding.top + 80, 24, 100),
                 children: [
                    // Butler's Counsel - Glassmorphism
                   Container(
@@ -357,7 +266,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(_getGreeting().toUpperCase(), style: const TextStyle(color: Colors.blueAccent, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 2)),
+                                Text(_getLocalizedGreeting(context).toUpperCase(), style: const TextStyle(color: Colors.blueAccent, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 2)),
                                 const SizedBox(height: 8),
                                 const Text('The Butler\'s Counsel', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
                               ],
@@ -366,7 +275,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ],
                         ),
                         const SizedBox(height: 24),
-                        // Visual Accent - Wave (Mocked with gradient box)
+                        // Visual Accent - Wave
                         Container(
                           height: 60,
                           decoration: BoxDecoration(
@@ -386,7 +295,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         ),
                         const SizedBox(height: 24),
                         Text(
-                          _butlerTip ?? 'Consistency is the hallmark of excellence, sir.',
+                          _controller.butlerTip ?? 'Consistency is the hallmark of excellence, sir.',
                           style: const TextStyle(color: Colors.white70, fontSize: 18, height: 1.6, fontStyle: FontStyle.italic),
                         ),
                       ],
@@ -430,7 +339,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
             onTap: () => _editTask(task),
             contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             leading: InkWell(
-              onTap: () => _markCompleted(task),
+              onTap: () async {
+                 _confettiController.play();
+                 await _controller.markCompleted(task);
+              },
               child: Container(
                 width: 32,
                 height: 32,
@@ -469,7 +381,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ],
                   onSelected: (val) {
                     if (val == 'add_sub') _addSubtask(task);
-                    if (val == 'delete') _deleteTask(task);
+                    if (val == 'delete') _controller.deleteTask(task);
                   },
                 ),
               ],
@@ -489,7 +401,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   dense: true,
                   contentPadding: const EdgeInsets.fromLTRB(60, 0, 16, 0),
                   leading: InkWell(
-                    onTap: () => _markCompleted(sub),
+                    onTap: () async {
+                      _confettiController.play();
+                      await _controller.markCompleted(sub);
+                    },
                     child: Container(
                       width: 20,
                       height: 20,
@@ -509,7 +424,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     children: [
                       IconButton(
                         icon: const Icon(Icons.delete_outline, color: Colors.white24, size: 18),
-                        onPressed: () => _deleteTask(sub),
+                        onPressed: () => _controller.deleteTask(sub),
                       ),
                       IconButton(
                         icon: const Icon(Icons.play_arrow_rounded, color: Colors.white24, size: 20),

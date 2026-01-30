@@ -32,6 +32,9 @@ dependencies:
   serverpod_flutter: 3.2.3
   serverpod_auth_idp_flutter: 3.2.3
   confetti: ^0.7.0
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_lints: '>=3.0.0 <7.0.0'
@@ -48,6 +51,7 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  generate: true
 
   # To add assets to your application, add an assets section, like this:
   # assets:

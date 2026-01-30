@@ -98,6 +98,7 @@ class _TimeBoxScreenState extends State<TimeBoxScreen> {
         final mainTask = Task(
             title: title, 
             isCompleted: false,
+            createdAt: DateTime.now(),
         );
         final savedMainTask = await client.tasks.addTask(mainTask);
 
@@ -107,6 +108,7 @@ class _TimeBoxScreenState extends State<TimeBoxScreen> {
                 title: subtaskTitle,
                 isCompleted: false,
                 parentTaskId: savedMainTask.id, 
+                createdAt: DateTime.now(),
             );
             await client.tasks.addTask(subtask);
         }
