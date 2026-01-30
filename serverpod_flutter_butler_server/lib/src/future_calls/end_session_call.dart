@@ -16,14 +16,14 @@ class EndSessionCall extends FutureCall<FocusSession> {
     object.actualEndTime = DateTime.now();
     await FocusSession.db.updateRow(session, object);
 
-    // 2. Mock: Restore Slack Status
-    // In a real app, we would use object.slackStatusOriginal to restore.
-    session.log('[Mock] Restoring Slack Status to: "${object.slackStatusOriginal ?? 'Active'}"');
-
-    // 3. Generate Focus Summary (Placeholder for Phase 4)
-    session.log('[Mock] Generating Focus Summary...');
+    // 2. Integration Point: Restore Slack Status
+    // TODO: Implement actual Slack API integration here using object.slackStatusOriginal
     
-    // 4. Notify User (Placeholder for WebSocket/Push)
-    session.log('[Mock] Notification: Deep Work Session Completed!');
+    // 3. Integration Point: Generate Focus Summary
+    // TODO: Trigger summarization logic
+    
+    // 4. Integration Point: User Notification
+    // TODO: Send push notification or WebSocket event
+    session.log('Deep Work Session Completed: ${object.id}. Integrations pending.');
   }
 }

@@ -19,11 +19,35 @@ class DashboardController extends ChangeNotifier {
     if (hour < 17) return GreetingType.afternoon;
     return GreetingType.evening;
   }
-    isLoading = true;
-    error = null;
-    notifyListeners();
+  bool hasMore = true;
+  int _offset = 0;
+  static const int _limit = 20;
+
+  Future<void> loadAllData({bool refresh = false}) async {
+    if (refresh) {
+      isLoading = true;
+      _offset = 0;
+      allTasks.clear();
+      hasMore = true;
+      notifyListeners();
+    }
+    
+    if (!hasMore) return;
+
     try {
-      await _fetchData();
+      final newTasks = await client.tasks.getAllTasks(limit: _limit, offset: _offset);
+      
+      if (refresh) {
+         // Only fetch tip on full refresh
+         butlerTip = await client.tasks.getButlerTip();
+      }
+
+      if (newTasks.length < _limit) {
+        hasMore = false;
+      }
+      
+      allTasks.addAll(newTasks);
+      _offset += newTasks.length;
     } catch (e) {
       error = e.toString();
     } finally {
@@ -32,20 +56,22 @@ class DashboardController extends ChangeNotifier {
     }
   }
 
+  Future<void> loadMore() async {
+    if (isLoading || !hasMore) return;
+    await loadAllData(refresh: false);
+  }
+
   Future<void> silentRefresh() async {
+    // For now, silent refresh just re-fetches the first page to keep it simple, 
+    // or we'd need complex merging logic. 
+    // Let's reload everything silently to ensure consistency for this MVP phase.
     try {
-      await _fetchData();
-      notifyListeners();
+       final tasks = await client.tasks.getAllTasks(limit: _offset > 0 ? _offset : _limit, offset: 0);
+       allTasks = tasks;
+       notifyListeners();
     } catch (e) {
       // Silent error
     }
-  }
-
-  Future<void> _fetchData() async {
-    final tasks = await client.tasks.getAllTasks();
-    final tip = await client.tasks.getButlerTip();
-    allTasks = tasks;
-    butlerTip = tip;
   }
 
 

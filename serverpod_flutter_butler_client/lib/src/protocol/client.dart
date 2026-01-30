@@ -330,12 +330,18 @@ class EndpointTasks extends _i2.EndpointRef {
   String get name => 'tasks';
 
   /// Fetches all tasks from the database.
-  _i3.Future<List<_i6.Task>> getAllTasks() =>
-      caller.callServerEndpoint<List<_i6.Task>>(
-        'tasks',
-        'getAllTasks',
-        {},
-      );
+  /// Fetches tasks from the database with pagination.
+  _i3.Future<List<_i6.Task>> getAllTasks({
+    required int limit,
+    required int offset,
+  }) => caller.callServerEndpoint<List<_i6.Task>>(
+    'tasks',
+    'getAllTasks',
+    {
+      'limit': limit,
+      'offset': offset,
+    },
+  );
 
   /// Adds a new task to the database.
   _i3.Future<_i6.Task> addTask(_i6.Task task) =>

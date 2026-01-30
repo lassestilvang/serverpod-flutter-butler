@@ -123,7 +123,7 @@ class _InsightScreenState extends State<InsightScreen> {
                     children: [
                       Text(
                         'PERFORMANCE SUMMARY',
-                        style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 3),
+                        style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 3),
                       ),
                       const SizedBox(height: 24),
                       Row(
@@ -154,9 +154,9 @@ class _InsightScreenState extends State<InsightScreen> {
                         children: [
                           Text(
                             'ACCOMPLISHMENTS LOG',
-                            style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 3),
+                            style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 3),
                           ),
-                          Icon(Icons.history, color: Colors.white.withOpacity(0.4), size: 16),
+                          Icon(Icons.history, color: Colors.white.withValues(alpha: 0.4), size: 16),
                         ],
                       ),
                       const SizedBox(height: 16),
@@ -195,9 +195,9 @@ class _InsightScreenState extends State<InsightScreen> {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.04),
+        color: Colors.white.withValues(alpha: 0.04),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.08)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -208,7 +208,7 @@ class _InsightScreenState extends State<InsightScreen> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.check_circle, color: Colors.greenAccent.withOpacity(0.8), size: 20),
+                Icon(Icons.check_circle, color: Colors.greenAccent.withValues(alpha: 0.8), size: 20),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -217,7 +217,7 @@ class _InsightScreenState extends State<InsightScreen> {
                       if (contributingLabel != null)
                         Text(
                           'PART OF: $contributingLabel',
-                          style: TextStyle(color: Colors.blueAccent.withOpacity(0.8), fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 1),
+                          style: TextStyle(color: Colors.blueAccent.withValues(alpha: 0.8), fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 1),
                         ),
                       const SizedBox(height: 4),
                       Text(
@@ -247,7 +247,7 @@ class _InsightScreenState extends State<InsightScreen> {
             Container(
               decoration: BoxDecoration(
                 color: Colors.black12,
-                border: Border(top: BorderSide(color: Colors.white.withOpacity(0.05))),
+                border: Border(top: BorderSide(color: Colors.white.withValues(alpha: 0.05))),
               ),
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: Column(
@@ -258,17 +258,17 @@ class _InsightScreenState extends State<InsightScreen> {
                      child: Row(
                        children: [
                          const SizedBox(width: 24), // Indent
-                         Icon(Icons.subdirectory_arrow_right, color: Colors.white.withOpacity(0.3), size: 16),
+                         Icon(Icons.subdirectory_arrow_right, color: Colors.white.withValues(alpha: 0.3), size: 16),
                          const SizedBox(width: 8),
                          Expanded(
                            child: Column(
                              crossAxisAlignment: CrossAxisAlignment.start,
                              children: [
-                               Text(child.title, style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 14)),
+                               Text(child.title, style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 14)),
                                const SizedBox(height: 2),
                                Text(
                                  'Done: ${_formatDate(child.completedAt)} • Focus: ${childFocus}m',
-                                 style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 10),
+                                 style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 10),
                                ),
                              ],
                            ),
@@ -300,20 +300,20 @@ class _InsightScreenState extends State<InsightScreen> {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white.withOpacity(0.08)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.white.withOpacity(0.05),
-            Colors.white.withOpacity(0.02),
+            Colors.white.withValues(alpha: 0.05),
+            Colors.white.withValues(alpha: 0.02),
           ],
         ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1)),
+          Text(title, style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1)),
           const SizedBox(height: 16),
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -330,25 +330,15 @@ class _InsightScreenState extends State<InsightScreen> {
               borderRadius: BorderRadius.circular(2),
               gradient: LinearGradient(colors: glowColors),
               boxShadow: [
-                BoxShadow(color: glowColors[0].withOpacity(0.5), blurRadius: 8, spreadRadius: 1)
+                BoxShadow(color: glowColors[0].withValues(alpha: 0.5), blurRadius: 8, spreadRadius: 1)
               ]
             ),
           ),
           const SizedBox(height: 12),
-          Text(subtext, style: TextStyle(color: glowColors[0].withOpacity(0.8), fontSize: 10, fontWeight: FontWeight.bold)),
+          Text(subtext, style: TextStyle(color: glowColors[0].withValues(alpha: 0.8), fontSize: 10, fontWeight: FontWeight.bold)),
         ],
       ),
     );
   }
 
-  Widget _buildSmallMetric(String label, String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 10, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 4),
-        Text(value, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
-      ],
-    );
-  }
 }

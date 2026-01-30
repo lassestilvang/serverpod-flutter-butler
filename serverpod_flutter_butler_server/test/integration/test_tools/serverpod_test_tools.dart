@@ -709,8 +709,10 @@ class _TasksEndpoint {
   final _i2.SerializationManager _serializationManager;
 
   _i3.Future<List<_i6.Task>> getAllTasks(
-    _i1.TestSessionBuilder sessionBuilder,
-  ) async {
+    _i1.TestSessionBuilder sessionBuilder, {
+    required int limit,
+    required int offset,
+  }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
@@ -722,7 +724,10 @@ class _TasksEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'tasks',
           methodName: 'getAllTasks',
-          parameters: _i1.testObjectToJson({}),
+          parameters: _i1.testObjectToJson({
+            'limit': limit,
+            'offset': offset,
+          }),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =

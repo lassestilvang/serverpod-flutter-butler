@@ -5,7 +5,7 @@ import '../main.dart';
 import '../widgets/task_entry_widget.dart';
 import '../widgets/butler_app_bar.dart';
 import '../controllers/dashboard_controller.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../gen/app_localizations.dart';
 
 class DashboardScreen extends StatefulWidget {
   final Function(int)? onStartFocus;
@@ -18,6 +18,7 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   late ConfettiController _confettiController;
   final _controller = DashboardController();
+  final _scrollController = ScrollController();
 
   @override
   void didUpdateWidget(DashboardScreen oldWidget) {
@@ -30,30 +31,40 @@ class _DashboardScreenState extends State<DashboardScreen> {
     super.initState();
     _confettiController = ConfettiController(duration: const Duration(seconds: 2));
     _controller.loadAllData();
+    _scrollController.addListener(_onScroll);
   }
 
   @override
   void dispose() {
+    _scrollController.dispose();
     _confettiController.dispose();
     _controller.dispose();
     super.dispose();
   }
 
+  void _onScroll() {
+    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+      _controller.loadMore();
+    }
+  }
+
+
   Future<void> _addSubtask(Task parent) async {
     final titleController = TextEditingController();
+    final l10n = AppLocalizations.of(context)!;
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF1E293B),
-        title: Text('Add Subtask to "${parent.title}"', style: const TextStyle(color: Colors.white, fontSize: 16)),
+        title: Text(l10n.addSubtaskTo(parent.title), style: const TextStyle(color: Colors.white, fontSize: 16)),
         content: TextField(
           controller: titleController,
           autofocus: true,
           style: const TextStyle(color: Colors.white),
-          decoration: const InputDecoration(
-            hintText: 'Subtask Title',
-            hintStyle: TextStyle(color: Colors.white54),
-            enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white30)),
+          decoration: InputDecoration(
+            hintText: l10n.subtaskTitle,
+            hintStyle: const TextStyle(color: Colors.white54),
+            enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.white30)),
           ),
           onSubmitted: (val) {
              _controller.addTask(val, parentId: parent.id);
@@ -62,11 +73,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
         actions: [
           TextButton(
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
             onPressed: () => Navigator.of(context).pop(),
           ),
           TextButton(
-            child: const Text('Add', style: TextStyle(color: Colors.blueAccent)),
+            child: Text(l10n.add, style: const TextStyle(color: Colors.blueAccent)),
             onPressed: () {
               _controller.addTask(titleController.text, parentId: parent.id);
               Navigator.of(context).pop();
@@ -78,19 +89,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<void> _editTask(Task task) async {
+    final l10n = AppLocalizations.of(context)!;
     final titleController = TextEditingController(text: task.title);
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF1E293B),
-        title: const Text('Edit Task', style: TextStyle(color: Colors.white)),
+        title: Text(l10n.editTask, style: const TextStyle(color: Colors.white)),
         content: TextField(
           controller: titleController,
           style: const TextStyle(color: Colors.white),
-          decoration: const InputDecoration(
-            hintText: 'Task Title',
-            hintStyle: TextStyle(color: Colors.white54),
-            enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white30)),
+          decoration: InputDecoration(
+            hintText: l10n.taskTitle,
+            hintStyle: const TextStyle(color: Colors.white54),
+            enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.white30)),
           ),
           onSubmitted: (val) {
              _controller.editTask(task, val);
@@ -99,11 +111,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
         actions: [
           TextButton(
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
             onPressed: () => Navigator.of(context).pop(),
           ),
           TextButton(
-            child: const Text('Save', style: TextStyle(color: Colors.blueAccent)),
+            child: Text(l10n.save, style: const TextStyle(color: Colors.blueAccent)),
             onPressed: () {
                _controller.editTask(task, titleController.text);
                Navigator.of(context).pop();
@@ -141,6 +153,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+           final l10n = AppLocalizations.of(context)!;
            showModalBottomSheet(
             context: context,
             isScrollControlled: true,
@@ -154,7 +167,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               padding: const EdgeInsets.all(24),
               child: Column(
                 children: [
-                   const Text('Add New Task', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                   Text(l10n.addNewTask, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
                    const SizedBox(height: 20),
                    Expanded(child: TaskEntryWidget(onTaskSaved: () {
                      Navigator.of(context).pop();
@@ -215,6 +228,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               final displayRoots = [...mainTasks, ...orphans];
 
               if (displayRoots.isEmpty) {
+                final l10n = AppLocalizations.of(context)!;
                 return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -224,22 +238,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           boxShadow: [
-                            BoxShadow(color: Colors.blue.withOpacity(0.2), blurRadius: 40, spreadRadius: 10)
+                            BoxShadow(color: Colors.blue.withValues(alpha: 0.2), blurRadius: 40, spreadRadius: 10)
                           ],
                           gradient: const LinearGradient(colors: [Colors.blue, Colors.indigo]),
                         ),
                         child: const Icon(Icons.bolt, size: 80, color: Colors.white),
                       ),
                       const SizedBox(height: 40),
-                      Text('Ready to excel, sir?', style: Theme.of(context).textTheme.headlineSmall),
+                      Text(l10n.readyToExcel, style: Theme.of(context).textTheme.headlineSmall),
                       const SizedBox(height: 10),
-                      const Text('Your slate is clean. Let\'s orchestrate your day.', style: TextStyle(color: Colors.white54, fontSize: 16)),
+                      Text(l10n.cleanSlate, style: const TextStyle(color: Colors.white54, fontSize: 16)),
                     ],
                   ),
                 );
               }
 
+              final l10n = AppLocalizations.of(context)!;
               return ListView(
+                controller: _scrollController,
                 padding: EdgeInsets.fromLTRB(24, MediaQuery.of(context).padding.top + 80, 24, 100),
                 children: [
                    // Butler's Counsel - Glassmorphism
@@ -247,13 +263,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     padding: const EdgeInsets.all(32),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(32),
-                      border: Border.all(color: Colors.white.withOpacity(0.12)),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          Colors.white.withOpacity(0.08),
-                          Colors.white.withOpacity(0.02),
+                          Colors.white.withValues(alpha: 0.08),
+                          Colors.white.withValues(alpha: 0.02),
                         ],
                       ),
                     ),
@@ -268,7 +284,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               children: [
                                 Text(_getLocalizedGreeting(context).toUpperCase(), style: const TextStyle(color: Colors.blueAccent, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 2)),
                                 const SizedBox(height: 8),
-                                const Text('The Butler\'s Counsel', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+                                Text(l10n.butlersCounsel, style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
                               ],
                             ),
                             const Icon(Icons.auto_awesome, color: Colors.blueAccent, size: 32),
@@ -282,20 +298,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             borderRadius: BorderRadius.circular(16),
                             gradient: LinearGradient(
                               colors: [
-                                Colors.blue.withOpacity(0),
-                                Colors.blueAccent.withOpacity(0.3),
-                                Colors.purpleAccent.withOpacity(0.3),
-                                Colors.blue.withOpacity(0),
+                                Colors.blue.withValues(alpha: 0),
+                                Colors.blueAccent.withValues(alpha: 0.3),
+                                Colors.purpleAccent.withValues(alpha: 0.3),
+                                Colors.blue.withValues(alpha: 0),
                               ],
                             ),
                           ),
                           child: Center(
-                            child: Icon(Icons.waves, color: Colors.white.withOpacity(0.2), size: 40),
+                            child: Icon(Icons.waves, color: Colors.white.withValues(alpha: 0.2), size: 40),
                           ),
                         ),
                         const SizedBox(height: 24),
                         Text(
-                          _controller.butlerTip ?? 'Consistency is the hallmark of excellence, sir.',
+                          _controller.butlerTip ?? l10n.defaultTip,
                           style: const TextStyle(color: Colors.white70, fontSize: 18, height: 1.6, fontStyle: FontStyle.italic),
                         ),
                       ],
@@ -303,14 +319,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                   const SizedBox(height: 48),
                   Text(
-                    'PRIMARY OBJECTIVES', 
-                    style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 3)
+                    l10n.primaryObjectives, 
+                    style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 3)
                   ),
                   const SizedBox(height: 24),
                   // Render Task Hierarchy
                   for (final task in displayRoots) ...[
                     _buildTaskCard(task, subTasksList.where((s) => s.parentTaskId == task.id).toList()),
-                  ]
+                  ],
+                  if (_controller.hasMore)
+                    const Padding(
+                      padding: EdgeInsets.all(24.0),
+                      child: Center(child: CircularProgressIndicator(color: Colors.white30)),
+                    ),
                 ],
               );
             },
@@ -375,10 +396,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
                 PopupMenuButton(
                   icon: const Icon(Icons.more_horiz, color: Colors.white38),
-                  itemBuilder: (context) => [
-                    const PopupMenuItem(value: 'add_sub', child: Text('Add Subtask')),
-                    const PopupMenuItem(value: 'delete', child: Text('Delete Task')),
-                  ],
+                  itemBuilder: (context) {
+                    final l10n = AppLocalizations.of(context)!;
+                    return [
+                      PopupMenuItem(value: 'add_sub', child: Text(l10n.addSubtask)),
+                      PopupMenuItem(value: 'delete', child: Text(l10n.deleteTask)),
+                    ];
+                  },
                   onSelected: (val) {
                     if (val == 'add_sub') _addSubtask(task);
                     if (val == 'delete') _controller.deleteTask(task);

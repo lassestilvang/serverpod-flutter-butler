@@ -387,13 +387,26 @@ class Endpoints extends _i1.EndpointDispatch {
       methodConnectors: {
         'getAllTasks': _i1.MethodConnector(
           name: 'getAllTasks',
-          params: {},
+          params: {
+            'limit': _i1.ParameterDescription(
+              name: 'limit',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'offset': _i1.ParameterDescription(
+              name: 'offset',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+          },
           call:
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
               ) async => (endpoints['tasks'] as _i7.TasksEndpoint).getAllTasks(
                 session,
+                limit: params['limit'],
+                offset: params['offset'],
               ),
         ),
         'addTask': _i1.MethodConnector(

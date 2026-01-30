@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:serverpod_flutter_butler_client/serverpod_flutter_butler_client.dart';
 import '../main.dart'; // Access to the global 'client'
+import '../gen/app_localizations.dart';
 
 class TimeBoxScreen extends StatefulWidget {
   const TimeBoxScreen({super.key});
@@ -19,7 +20,6 @@ class _TimeBoxScreenState extends State<TimeBoxScreen> {
   // Timer State
   int? _secondsRemaining;
   int? _activeSubtaskIndex;
-  Stream<int>? _timerStream;
 
   void _startTimer(int index) async {
     // 25 minutes = 1500 seconds
@@ -43,7 +43,8 @@ class _TimeBoxScreenState extends State<TimeBoxScreen> {
       }
     } catch (e) {
       if (mounted) {
-         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Timer Error: $e')));
+         final l10n = AppLocalizations.of(context)!;
+         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.errorPrefix(e.toString()))));
       }
     }
   }
@@ -54,7 +55,8 @@ class _TimeBoxScreenState extends State<TimeBoxScreen> {
       _secondsRemaining = null;
     });
     if (mounted) {
-       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Pomodoro Completed! 🍅')));
+       final l10n = AppLocalizations.of(context)!;
+       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.pomodoroCompleted)));
     }
   } 
 
@@ -74,9 +76,12 @@ class _TimeBoxScreenState extends State<TimeBoxScreen> {
         _subtasks = result;
       });
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+      if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.errorPrefix(e.toString()))),
+        );
+      }
     } finally {
       setState(() {
         _isLoading = false;
@@ -87,7 +92,8 @@ class _TimeBoxScreenState extends State<TimeBoxScreen> {
   Future<void> _createTask() async {
     final title = _taskController.text.trim();
     if (title.isEmpty || _subtasks.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please enter a task and generate subtasks first.')));
+        final l10n = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.enterTaskFirst)));
         return;
     }
 
@@ -114,7 +120,8 @@ class _TimeBoxScreenState extends State<TimeBoxScreen> {
         }
         
         if (mounted) {
-             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Plan Saved Successfully! 💾')));
+             final l10n = AppLocalizations.of(context)!;
+             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.planSaved)));
              setState(() {
                _taskController.clear();
                _subtasks = [];
@@ -122,7 +129,8 @@ class _TimeBoxScreenState extends State<TimeBoxScreen> {
         }
     } catch (e) {
         if (mounted) {
-             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error saving plan: $e')));
+             final l10n = AppLocalizations.of(context)!;
+             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.errorSavingPlan(e.toString()))));
         }
     } finally {
         if (mounted) {
@@ -133,9 +141,10 @@ class _TimeBoxScreenState extends State<TimeBoxScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('TimeBox Butler'),
+        title: Text(l10n.timeboxButler),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -143,10 +152,10 @@ class _TimeBoxScreenState extends State<TimeBoxScreen> {
           children: [
             TextField(
               controller: _taskController,
-              decoration: const InputDecoration(
-                labelText: 'What is your main task?',
-                hintText: 'e.g., Refactor Auth Flow',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.mainTaskLabel,
+                hintText: l10n.mainTaskHint,
+                border: const OutlineInputBorder(),
               ),
               onSubmitted: (_) => _breakdownTask(),
             ),
@@ -157,7 +166,7 @@ class _TimeBoxScreenState extends State<TimeBoxScreen> {
                 FilledButton.icon(
                   onPressed: _isLoading ? null : _breakdownTask,
                   icon: const Icon(Icons.auto_awesome),
-                  label: const Text('Magic Breakdown'),
+                  label: Text(l10n.magicBreakdown),
                 ),
               ],
             ),
@@ -182,8 +191,8 @@ class _TimeBoxScreenState extends State<TimeBoxScreen> {
                         ),
                         title: Text(subtask),
                         subtitle: isRunning 
-                            ? Text('Time Remaining: ${_formatTime(_secondsRemaining ?? 0)}', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)) 
-                            : const Text('Estimated 1 Pomodoro'),
+                            ? Text(l10n.timeRemaining(_formatTime(_secondsRemaining ?? 0)), style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)) 
+                            : Text(l10n.estimatedPomodoro),
                         trailing: IconButton(
                           icon: Icon(isRunning ? Icons.timer : Icons.play_arrow),
                           color: isRunning ? Colors.green : null,
@@ -199,7 +208,7 @@ class _TimeBoxScreenState extends State<TimeBoxScreen> {
                 padding: const EdgeInsets.only(top: 10),
                 child: ElevatedButton(
                   onPressed: _createTask,
-                  child: const Text('Save Plan'),
+                  child: Text(l10n.savePlan),
                 ),
               ),
           ],

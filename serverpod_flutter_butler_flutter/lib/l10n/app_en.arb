@@ -1,5 +1,52 @@
 {
   "goodMorning": "Good morning, sir.",
   "goodAfternoon": "Good afternoon, sir.",
-  "goodEvening": "Good evening, sir."
+  "goodEvening": "Good evening, sir.",
+  "addSubtaskTo": "Add Subtask to \"{parent}\"",
+  "@addSubtaskTo": {
+    "placeholders": {
+        "parent": {}
+    }
+  },
+  "subtaskTitle": "Subtask Title",
+  "cancel": "Cancel",
+  "add": "Add",
+  "editTask": "Edit Task",
+  "taskTitle": "Task Title",
+  "save": "Save",
+  "addNewTask": "Add New Task",
+  "readyToExcel": "Ready to excel, sir?",
+  "cleanSlate": "Your slate is clean. Let's orchestrate your day.",
+  "butlersCounsel": "The Butler's Counsel",
+  "defaultTip": "Consistency is the hallmark of excellence, sir.",
+  "primaryObjectives": "PRIMARY OBJECTIVES",
+  "addSubtask": "Add Subtask",
+  "deleteTask": "Delete Task",
+  "timeboxButler": "TimeBox Butler",
+  "mainTaskLabel": "What is your main task?",
+  "mainTaskHint": "e.g., Refactor Auth Flow",
+  "magicBreakdown": "Magic Breakdown",
+  "timeRemaining": "Time Remaining: {time}",
+  "@timeRemaining": {
+      "placeholders": {
+          "time": {}
+      }
+  },
+  "estimatedPomodoro": "Estimated 1 Pomodoro",
+  "savePlan": "Save Plan",
+  "pomodoroCompleted": "Pomodoro Completed! 🍅",
+  "errorPrefix": "Error: {error}",
+  "@errorPrefix": {
+      "placeholders": {
+          "error": {}
+      }
+  },
+  "enterTaskFirst": "Please enter a task and generate subtasks first.",
+  "planSaved": "Plan Saved Successfully! 💾",
+  "errorSavingPlan": "Error saving plan: {error}",
+  "@errorSavingPlan": {
+      "placeholders": {
+          "error": {}
+      }
+  }
 }
